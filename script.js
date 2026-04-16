@@ -1,89 +1,133 @@
-const STORAGE_KEY = "BagSafe_System_Data";
-const form = document.getElementById('assessmentForm');
-let records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BagSafe AI | Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <header class="card hero-section">
+            <p class="eyebrow">Advanced Python Project Reimagined For Web</p>
+            <h1 class="serif">BagSafe AI</h1>
+            <p class="description">A baggage transfer risk dashboard for airport staff. Enter transfer details, predict delay risk, and keep a clean record of bags that need attention.</p>
+            
+            <div class="pill-row">
+                <span class="pill">Risk prediction</span>
+                <span class="pill">Airport operations</span>
+                <span class="pill">Pretty web interface</span>
+            </div>
 
-// 1. Core Logic
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const fd = new FormData(form);
-    const data = Object.fromEntries(fd.entries());
-    
-    let score = 15;
-    if (Number(data.layover) < 45) score += 50;
-    else if (Number(data.layover) < 70) score += 20;
-    if (Number(data.delay) > 15) score += 20;
-    if (data.type === "Priority" || form.elements.isPriority.checked) score -= 15;
+            <div class="live-status-hero">
+                <p class="eyebrow">Live status</p>
+                <h2 class="serif" id="heroStatus">Ready</h2>
+                <p class="status-sub">Waiting for a new assessment</p>
+            </div>
 
-    score = Math.max(5, Math.min(99, score));
-    const risk = score > 75 ? "High" : score > 40 ? "Medium" : "Low";
+            <div class="stats-grid">
+                <div class="stat-item"><p class="eyebrow">Assessments</p><strong id="statsTotal">0</strong></div>
+                <div class="stat-item"><p class="eyebrow">High risk</p><strong id="statsHigh">0</strong></div>
+                <div class="stat-item"><p class="eyebrow">Average score</p><strong id="statsAvg">0%</strong></div>
+            </div>
+        </header>
 
-    const newRecord = {
-        id: Date.now(),
-        passengerName: data.passengerName || "Unnamed",
-        flightNumber: (data.flightNumber || "N/A").toUpperCase(),
-        tag: data.bagTag || "BG-000",
-        route: `${(data.origin || "???").toUpperCase()} → ${(data.destination || "???").toUpperCase()}`,
-        risk, score,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <p class="eyebrow">Transfer Input</p>
+                    <h2 class="serif">Run a baggage assessment</h2>
+                </div>
+                <button type="button" class="action-btn-outline" id="fillSampleBtn">Use sample data</button>
+            </div>
 
-    records.unshift(newRecord);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-    
-    // UI Update
-    document.getElementById('riskBadge').innerText = risk;
-    document.getElementById('riskScore').innerText = score + "%";
-    document.getElementById('riskTitle').innerText = risk === "High" ? "High Risk Alert" : "Assessment Complete";
-    document.getElementById('heroStatus').innerText = risk === "High" ? "Alert" : "Ready";
-    
-    renderTable();
-});
+            <form id="assessmentForm" class="grid-form">
+                <div class="input-group"><label>Passenger name</label><input type="text" name="passengerName" placeholder="Aisha Rahman"></div>
+                <div class="input-group"><label>Booking reference</label><input type="text" name="bookingReference" placeholder="BRG472"></div>
+                <div class="input-group"><label>Bag tag</label><input type="text" name="bagTag" placeholder="BG-1001"></div>
+                <div class="input-group"><label>Flight number</label><input type="text" name="flightNumber" placeholder="EK211"></div>
+                <div class="input-group"><label>Origin</label><input type="text" name="origin" placeholder="DXB"></div>
+                <div class="input-group"><label>Destination</label><input type="text" name="destination" placeholder="LHR"></div>
+                <div class="input-group"><label>Layover minutes</label><input type="number" name="layover" value="55"></div>
+                <div class="input-group"><label>Transfer points</label><input type="number" name="points" value="2"></div>
+                <div class="input-group"><label>Terminal distance (m)</label><input type="number" name="distance" value="1200"></div>
+                <div class="input-group"><label>Incoming delay (min)</label><input type="number" name="delay" value="18"></div>
+                <div class="input-group"><label>Checked bags</label><input type="number" name="bags" value="2"></div>
+                <div class="input-group">
+                    <label>Baggage type</label>
+                    <select name="type">
+                        <option>Transfer</option>
+                        <option>Priority</option>
+                    </select>
+                </div>
 
-// 2. Button Functions
-function deleteRecord(id) {
-    records = records.filter(r => r.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-    renderTable();
-}
+                <div class="checkbox-row">
+                    <label class="pill-check"><input type="checkbox" name="isPriority"> Priority status</label>
+                    <label class="pill-check"><input type="checkbox" name="isIntl" checked> International transfer</label>
+                </div>
 
-document.getElementById('clearAllBtn').onclick = () => {
-    if(confirm("Delete everything?")) {
-        records = [];
-        localStorage.clear();
-        renderTable();
-    }
-};
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">Predict and save</button>
+                    <button type="button" class="action-btn-outline" id="clearBtn">Clear form</button>
+                </div>
+            </form>
+        </section>
 
-document.getElementById('clearBtn').onclick = () => form.reset();
+        <section class="card summary-section">
+            <p class="eyebrow">Prediction Summary</p>
+            <div class="status-badge" id="riskBadge">Waiting</div>
+            <h2 class="serif" id="riskTitle">No assessment yet</h2>
+            <p>Confidence score: <strong id="riskScore">0%</strong></p>
+            <p class="description">Fill in the transfer form to generate a baggage transfer risk prediction.</p>
+        </section>
 
-document.getElementById('fillSampleBtn').onclick = () => {
-    const s = { passengerName: "Aisha Rahman", bookingReference: "BRG472", bagTag: "BG-1001", flightNumber: "EK211", origin: "DXB", destination: "LHR", layover: 55, delay: 18 };
-    Object.keys(s).forEach(k => { if(form.elements[k]) form.elements[k].value = s[k]; });
-};
+        <section class="card">
+            <p class="eyebrow">Operational Guidance</p>
+            <div class="info-row">Use the sample button if you want a quick demo.</div>
+            <div class="info-row">High-risk bags should be escalated for manual attention.</div>
+            <div class="info-row">Saved records stay in your browser on this device.</div>
+        </section>
 
-// 3. Render Table
-function renderTable() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = records.filter(r => r.passengerName.toLowerCase().includes(q) || r.flightNumber.toLowerCase().includes(q));
-    
-    document.getElementById('statsTotal').innerText = records.length;
-    document.getElementById('statsHigh').innerText = records.filter(r => r.risk === "High").length;
-    const avg = records.length ? Math.round(records.reduce((a, b) => a + b.score, 0) / records.length) : 0;
-    document.getElementById('statsAvg').innerText = avg + "%";
+        <section class="card">
+            <p class="eyebrow">What this shows</p>
+            <div class="info-block">
+                <strong>OOP concept mapping</strong>
+                <p>Passenger, bag, route, and prediction logic are represented in the original Python version.</p>
+            </div>
+            <div class="info-block">
+                <strong>GUI requirement</strong>
+                <p>This web version gives you an app-style interface you can open directly in the browser.</p>
+            </div>
+            <div class="info-block">
+                <strong>Presentation ready</strong>
+                <p>You can screen-record this interface for the project demo.</p>
+            </div>
+        </section>
 
-    document.getElementById('logBody').innerHTML = filtered.map(r => `
-        <tr>
-            <td><strong>${r.passengerName}</strong></td>
-            <td>${r.flightNumber}</td>
-            <td>${r.route}</td>
-            <td><code>${r.tag}</code></td>
-            <td style="color:${r.risk === 'High' ? '#710C21' : '#2e7d32'}; font-weight:800">${r.risk}</td>
-            <td>${r.score}%</td>
-            <td>${r.time}</td>
-            <td><button class="del-btn" onclick="deleteRecord(${r.id})">Delete</button></td>
-        </tr>
-    `).join('');
-}
-
-document.getElementById('searchInput').oninput = renderTable;
-renderTable();
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <p class="eyebrow">Saved Assessments</p>
+                    <h2 class="serif">Transfer monitoring log</h2>
+                </div>
+                <div class="table-controls">
+                    <input type="text" id="searchInput" placeholder="Search passenger, flight, or tag..." class="search-box">
+                    <button type="button" class="action-btn-outline" id="clearAllBtn">Clear all</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Passenger</th><th>Flight</th><th>Route</th><th>Bag</th><th>Risk</th><th>Score</th><th>Saved</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
