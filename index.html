@@ -38,7 +38,15 @@
                 </div>
             </header>
 
-            <div class="split-layout">
+            <aside class="card prediction-container top-span">
+                <p class="eyebrow">Prediction Summary</p>
+                <div id="riskBadge" class="status-pill">Waiting</div>
+                <h2 class="serif-title" id="riskTitle">No assessment yet</h2>
+                <p class="score-line"><strong>Confidence: <span id="riskScore">0%</span></strong></p>
+                <p class="guidance-box">Fill in the transfer form below to generate a real-time risk prediction.</p>
+            </aside>
+
+            <div class="laptop-grid">
                 <section class="card form-container">
                     <div class="card-header">
                         <div>
@@ -56,47 +64,54 @@
                         <div class="input-group"><label>Origin</label><input name="origin" type="text" placeholder="DXB"></div>
                         <div class="input-group"><label>Destination</label><input name="destination" type="text" placeholder="LHR"></div>
                         <div class="input-group"><label>Layover (min)</label><input name="layoverMinutes" type="number" value="55"></div>
+                        <div class="input-group"><label>Transfer points</label><input name="transferPoints" type="number" value="2"></div>
+                        <div class="input-group"><label>Terminal dist (m)</label><input name="terminalDistance" type="number" value="1200"></div>
                         <div class="input-group"><label>Incoming delay (min)</label><input name="incomingDelay" type="number" value="18"></div>
+                        <div class="input-group"><label>Checked bags</label><input name="checkedBags" type="number" value="2"></div>
+                        <div class="input-group">
+                            <label>Baggage type</label>
+                            <select name="baggageType">
+                                <option value="transfer">Transfer</option>
+                                <option value="fragile">Fragile</option>
+                                <option value="priority">Priority</option>
+                            </select>
+                        </div>
                         
                         <div class="checkbox-row">
-                            <label class="pill-check"><input name="priorityStatus" type="checkbox"> Priority</label>
-                            <label class="pill-check"><input name="internationalTransfer" type="checkbox" checked> International</label>
+                            <label class="pill-check"><input name="priorityStatus" type="checkbox"> Priority status</label>
+                            <label class="pill-check"><input name="internationalTransfer" type="checkbox" checked> International transfer</label>
                         </div>
 
                         <div class="form-actions">
                             <button type="submit" class="primary-btn">Predict and save</button>
-                            <button type="button" id="clearBtn" class="action-btn-outline">Clear</button>
+                            <button type="button" id="clearBtn" class="action-btn-outline">Clear form</button>
                         </div>
                     </form>
                 </section>
 
-                <aside class="card prediction-container">
-                    <p class="eyebrow">Prediction Summary</p>
-                    <div id="riskBadge" class="status-pill">Waiting</div>
-                    <h2 class="serif-title" id="riskTitle">No assessment yet</h2>
-                    <p class="score-line"><strong>Confidence: <span id="riskScore">0%</span></strong></p>
-                    <div class="guidance-box">
-                        <p class="eyebrow">Guidance</p>
+                <aside class="sidebar-column">
+                    <section class="card guidance-container">
+                        <p class="eyebrow">Operational Guidance</p>
                         <div id="recommendationList" class="list-stack">
                             <div class="list-item">Waiting for input data...</div>
                         </div>
-                    </div>
+                    </section>
+
+                    <section class="card info-container">
+                        <p class="eyebrow">What this shows</p>
+                        <div class="list-stack">
+                            <div class="list-item"><strong>OOP Mapping</strong><p>Logic from the original Python version.</p></div>
+                            <div class="list-item"><strong>GUI Requirement</strong><p>App-style browser interface.</p></div>
+                            <div class="list-item"><strong>Demo Ready</strong><p>Screen-record for your presentation.</p></div>
+                        </div>
+                    </section>
                 </aside>
             </div>
 
-            <section class="card">
-                <p class="eyebrow">What this shows</p>
-                <div class="list-stack-horizontal">
-                    <div class="list-item"><strong>OOP Mapping</strong><p>Logic from the original Python version.</p></div>
-                    <div class="list-item"><strong>GUI Requirement</strong><p>App-style browser interface.</p></div>
-                    <div class="list-item"><strong>Demo Ready</strong><p>Screen-record for your presentation.</p></div>
-                </div>
-            </section>
-
-            <section class="card">
+            <section class="card top-span log-container">
                 <div class="card-header">
                     <p class="eyebrow">Monitoring log</p>
-                    <input id="searchInput" type="text" placeholder="Search...">
+                    <input id="searchInput" type="text" placeholder="Search passenger...">
                 </div>
                 <div class="table-container">
                     <table>
