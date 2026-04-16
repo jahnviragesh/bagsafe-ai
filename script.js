@@ -17,24 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(form).entries());
-        const score = Math.floor(Math.random() * 40) + 55;
-        const isHigh = score > 75;
+        const score = Math.floor(Math.random() * 45) + 50;
+        const isHigh = score > 70;
 
         count++; if(isHigh) high++; total += score;
 
-        // UI Updates
         document.getElementById('statsTotal').innerText = count;
         document.getElementById('statsHigh').innerText = high;
         document.getElementById('statsAverage').innerText = Math.round(total/count) + "%";
-        document.getElementById('riskBadge').innerText = isHigh ? "High Risk" : "Low Risk";
-        document.getElementById('riskTitle').innerText = isHigh ? "Escalation Needed" : "On Schedule";
+        document.getElementById('riskBadge').innerText = isHigh ? "High Risk" : "Secure";
+        document.getElementById('riskTitle').innerText = isHigh ? "Risk Alert" : "Clear";
         document.getElementById('riskScore').innerText = score + "%";
-        document.getElementById('heroRiskLabel').innerText = isHigh ? "Risk Alert" : "Clear";
+        document.getElementById('heroRiskLabel').innerText = isHigh ? "Alert" : "Ready";
 
         const row = `<tr>
             <td><strong>${data.passengerName}</strong></td><td>${data.flightNumber}</td>
-            <td>${data.origin} → ${data.destination}</td><td>${data.bagTag}</td>
-            <td style="color:${isHigh ? '#710C21' : 'inherit'}; font-weight:800">${isHigh?'High':'Low'}</td>
+            <td>${data.origin}→${data.destination}</td>
+            <td style="color:${isHigh ? '#710C21' : 'green'}; font-weight:800">${isHigh?'High':'Low'}</td>
             <td>${score}%</td><td>${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
         </tr>`;
         document.getElementById('recordsTableBody').insertAdjacentHTML('afterbegin', row);
