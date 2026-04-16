@@ -3,134 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BagSafe AI | Dashboard</title>
+    <title>BagSafe AI - Risk Dashboard</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-layout">
-        <header class="main-card hero-section">
-            <p class="eyebrow"></p>
-            <h1 class="serif">BagSafe AI</h1>
-            <p class="description">A baggage transfer risk dashboard for airport staff. Enter transfer details, predict delay risk, and keep a clean record of bags that need attention.</p>
-            
-            <div class="pill-row">
-                <span class="pill">Risk prediction</span>
-                <span class="pill">Airport operations</span>
-                <span class="pill">Smart interface</span>
-            </div>
 
-            <div class="status-glass-card">
-                <div class="status-main">
-                    <p class="eyebrow">Live status</p>
-                    <h2 class="serif" id="heroStatus">Ready</h2>
-                    <p class="status-sub">Waiting for a new assessment</p>
+    <header class="main-header">
+        <div class="header-content">
+            <p class="tagline">ADVANCED WEB-BASED PYTHON PROJECT</p>
+            <h1>BagSafe AI</h1>
+            <p class="subtitle">A baggage transfer risk dashboard for airport staff. Enter transfer details, predict delay risk, and keep a clean record of bags that need attention.</p>
+            <div class="header-pills">
+                <span>Risk prediction</span>
+                <span>Airport operations</span>
+                <span>Interactive web interface</span>
+            </div>
+        </div>
+        <div class="status-card">
+            <p>Live status</p>
+            <h2 id="heroStatus">Ready</h2>
+            <p class="small">Waiting for a new assessment</p>
+            <div class="stats-row">
+                <div class="stat">
+                    <span id="statsTotal">0</span>
+                    <p>Assessments</p>
                 </div>
-                <div class="stats-row">
-                    <div class="stat-group">
-                        <p class="stat-label">Assessments</p>
-                        <strong id="statsTotal">0</strong>
-                    </div>
-                    <div class="stat-group">
-                        <p class="stat-label">High risk</p>
-                        <strong id="statsHigh">0</strong>
-                    </div>
-                    <div class="stat-group">
-                        <p class="stat-label">Average score</p>
-                        <strong id="statsAvg">0%</strong>
-                    </div>
+                <div class="stat">
+                    <span id="statsHigh">0</span>
+                    <p>High risk</p>
+                </div>
+                <div class="stat">
+                    <span id="statsAvg">0%</span>
+                    <p>Average score</p>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <section class="main-card">
+    <div class="dashboard-grid">
+        <section class="card input-section">
             <div class="card-header">
                 <div>
-                    <p class="eyebrow">Transfer Input</p>
-                    <h2 class="serif">Run a baggage assessment</h2>
+                    <p class="small-caps">TRANSFER INPUT</p>
+                    <h2>Run a Baggage Assessment</h2>
                 </div>
-                <button type="button" class="btn-sample" id="fillSampleBtn">Use sample data</button>
+                <button id="fillSampleBtn" class="btn-secondary">Use sample data</button>
             </div>
-
-            <form id="assessmentForm" class="input-grid">
-                <div class="field"><label>Passenger name</label><input type="text" name="passengerName" placeholder="Aisha Rahman"></div>
-                <div class="field"><label>Booking reference</label><input type="text" name="bookingReference" placeholder="BRG472"></div>
-                <div class="field"><label>Bag tag</label><input type="text" name="bagTag" placeholder="BG-1001"></div>
-                <div class="field"><label>Flight number</label><input type="text" name="flightNumber" placeholder="EK211"></div>
-                <div class="field"><label>Origin</label><input type="text" name="origin" placeholder="DXB"></div>
-                <div class="field"><label>Destination</label><input type="text" name="destination" placeholder="LHR"></div>
-                <div class="field"><label>Layover minutes</label><input type="number" name="layover" value="55"></div>
-                <div class="field"><label>Transfer points</label><input type="number" name="transferPoints" value="2"></div>
-                <div class="field"><label>Terminal distance (m)</label><input type="number" name="distance" value="1200"></div>
-                <div class="field"><label>Incoming delay (min)</label><input type="number" name="delay" value="18"></div>
-                <div class="field"><label>Checked bags</label><input type="number" name="bags" value="2"></div>
-                <div class="field">
-                    <label>Baggage type</label>
-                    <select name="type"><option>Transfer</option><option>Arrival</option></select>
+            
+            <form id="assessmentForm">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Passenger name</label>
+                        <input type="text" name="passengerName" placeholder="Aisha Rahman">
+                    </div>
+                    <div class="field">
+                        <label>Booking reference</label>
+                        <input type="text" name="bookingReference" placeholder="BRG472">
+                    </div>
+                    <div class="field">
+                        <label>Bag tag</label>
+                        <input type="text" name="bagTag" placeholder="BG-1001">
+                    </div>
+                    <div class="field">
+                        <label>Flight number</label>
+                        <input type="text" name="flightNumber" placeholder="EK211">
+                    </div>
+                    <div class="field">
+                        <label>Origin</label>
+                        <input type="text" name="origin" placeholder="DXB">
+                    </div>
+                    <div class="field">
+                        <label>Destination</label>
+                        <input type="text" name="destination" placeholder="LHR">
+                    </div>
+                    <div class="field">
+                        <label>Layover minutes</label>
+                        <input type="number" name="layover" placeholder="55">
+                    </div>
+                    <div class="field">
+                        <label>Transfer points</label>
+                        <input type="number" name="transferPoints" placeholder="2">
+                    </div>
+                    <div class="field">
+                        <label>Terminal distance (m)</label>
+                        <input type="number" name="distance" placeholder="1200">
+                    </div>
+                    <div class="field">
+                        <label>Incoming delay (min)</label>
+                        <input type="number" name="delay" placeholder="18">
+                    </div>
                 </div>
 
-                <div class="checkbox-container">
-                    <label class="check-pill"><input type="checkbox" name="isPriority"> Priority status</label>
-                    <label class="check-pill"><input type="checkbox" name="isIntl" checked> International transfer</label>
-                </div>
-
-                <div class="form-btns">
+                <div class="form-footer">
                     <button type="submit" class="btn-primary">Predict and save</button>
-                    <button type="button" class="btn-secondary" id="clearBtn">Clear form</button>
+                    <button type="reset" id="clearBtn" class="btn-outline">Clear form</button>
                 </div>
             </form>
         </section>
 
-        <section class="main-card">
-            <p class="eyebrow">Prediction Summary</p>
-            <div class="badge-waiting" id="riskBadge">Waiting</div>
-            <h2 class="serif" id="riskTitle">No assessment yet</h2>
-            <p class="confidence">Confidence score: <strong id="riskScore">0%</strong></p>
-            <p class="sub-text">Fill in the transfer form to generate a baggage transfer risk prediction.</p>
-        </section>
-
-        <section class="main-card">
-            <p class="eyebrow">Operational Guidance</p>
-            <ul class="guidance-list">
-                <li>Use sample data for rapid testing.</li>
-                <li>High-risk tags require manual sorting.</li>
-                <li>Data persists locally in your browser.</li>
-            </ul>
-        </section>
-
-        
-        <section class="main-card">
-            <p class="eyebrow">What This Shows</p>
-            <ul class="guidance-list">
-                <li>This web version gives you an app-style interface you can open directly in the browser.</li>
-                <li>High-risk tags require manual sorting.</li>
-                <li>Data persists locally in your browser.</li>
-            </ul>
-        </section>
-        <section>
-        
-        </section>
-        <section class="main-card">
-            <div class="card-header">
-                <div>
-                    <p class="eyebrow">Saved Assessments</p>
-                    <h2 class="serif">Transfer monitoring log</h2>
-                </div>
-                <div class="log-actions">
-                    <input type="text" id="searchInput" placeholder="Search passenger, flight, tag, or risk..." class="log-search">
-                    <button type="button" class="btn-secondary" id="clearAllBtn">Clear all</button>
+        <aside class="sidebar">
+            <div class="card summary-card">
+                <p class="small-caps">PREDICTION SUMMARY</p>
+                <div id="predictionResult">
+                    <p class="status-label">Waiting</p>
+                    <h2 class="no-prediction">No assessment yet</h2>
+                    <p>Confidence score: <span id="riskScore">0%</span></p>
+                    <p class="small">Fill in the transfer form to generate a baggage transfer risk prediction.</p>
                 </div>
             </div>
-            <div class="table-scroll">
-                <table>
-                    <thead>
-                        <tr><th>Passenger</th><th>Flight</th><th>Route</th><th>Bag</th><th>Risk</th><th>Score</th><th>Saved</th></tr>
-                    </thead>
-                    <tbody id="logBody"></tbody>
-                </table>
+
+            <div class="card guidance-card">
+                <p class="small-caps">OPERATIONAL GUIDANCE</p>
+                <ul>
+                    <li>Use the sample button to load a quick demonstration case.</li>
+                    <li>High-risk bags should be escalated for manual attention.</li>
+                    <li>Saved records stay in your browser on this device.</li>
+                </ul>
             </div>
-        </section>
+        </aside>
     </div>
+
+    <section class="card log-section">
+        <div class="card-header">
+            <div>
+                <p class="small-caps">SAVED ASSESSMENTS</p>
+                <h2 class="serif-title">Transfer Monitoring Log</h2>
+            </div>
+            <div class="log-actions">
+                <input type="text" id="searchInput" placeholder="Search passenger, flight, tag...">
+                <button id="clearAllBtn" class="btn-outline">Clear all</button>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>PASSENGER</th>
+                    <th>FLIGHT</th>
+                    <th>ROUTE</th>
+                    <th>BAG</th>
+                    <th>RISK</th>
+                    <th>SCORE</th>
+                    <th>SAVED</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="logBody">
+                </tbody>
+        </table>
+    </section>
+
     <script src="script.js"></script>
 </body>
 </html>
