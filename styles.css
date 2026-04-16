@@ -77,7 +77,7 @@ input, select { width: 100%; padding: 14px 18px; border-radius: 12px; border: no
     
     /* ALIGNMENT FIX */
     display: flex;
-    align-items: center; 
+    align-items: left; 
     justify-content: flex-start; /* This moves both the box and text to the left */
     gap: 12px; /* Space between the checkbox and the label text */
     
