@@ -79,29 +79,24 @@
             <div class="status-badge" id="riskBadge">Waiting</div>
             <h2 class="serif" id="riskTitle">No assessment yet</h2>
             <p>Confidence score: <strong id="riskScore">0%</strong></p>
-            <p class="description">Fill in the transfer form to generate a baggage transfer risk prediction.</p>
         </section>
 
         <section class="card">
             <p class="eyebrow">Operational Guidance</p>
-            <div class="info-row">Use the sample button if you want a quick demo.</div>
-            <div class="info-row">High-risk bags should be escalated for manual attention.</div>
-            <div class="info-row">Saved records stay in your browser on this device.</div>
+            <div class="glass-item">Use the sample button if you want a quick demo.</div>
+            <div class="glass-item">High-risk bags should be escalated for manual attention.</div>
+            <div class="glass-item">Saved records stay in your browser on this device.</div>
         </section>
 
         <section class="card">
             <p class="eyebrow">What this shows</p>
-            <div class="info-block">
-                <strong>OOP concept mapping</strong>
+            <div class="glass-item">
+                <p class="small-label">OOP concept mapping</p>
                 <p>Passenger, bag, route, and prediction logic are represented in the original Python version.</p>
             </div>
-            <div class="info-block">
-                <strong>GUI requirement</strong>
+            <div class="glass-item">
+                <p class="small-label">GUI requirement</p>
                 <p>This web version gives you an app-style interface you can open directly in the browser.</p>
-            </div>
-            <div class="info-block">
-                <strong>Presentation ready</strong>
-                <p>You can screen-record this interface for the project demo.</p>
             </div>
         </section>
 
@@ -112,7 +107,7 @@
                     <h2 class="serif">Transfer monitoring log</h2>
                 </div>
                 <div class="table-controls">
-                    <input type="text" id="searchInput" placeholder="Search passenger, flight, or tag..." class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search..." class="search-box">
                     <button type="button" class="action-btn-outline" id="clearAllBtn">Clear all</button>
                 </div>
             </div>
