@@ -4,50 +4,73 @@
   <meta charset="UTF-8">
   <title>BagSafe AI</title>
 
-  <!-- FIXED CSS LINKS -->
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <h1>BagSafe AI</h1>
+<h1>BagSafe AI</h1>
 
-  <button id="fillSampleBtn">Use Sample Data</button>
-  <button id="clearBtn">Clear</button>
+<button id="fillSampleBtn">Use Sample Data</button>
+<button id="clearBtn">Clear Form</button>
+<button id="clearRecordsBtn">Clear Records</button>
 
-  <form id="assessmentForm">
-    <input name="passengerName" placeholder="Passenger Name" required>
-    <input name="bookingReference" placeholder="Booking Ref" required>
-    <input name="bagTag" placeholder="Bag Tag" required>
-    <input name="flightNumber" placeholder="Flight" required>
-    <input name="origin" placeholder="Origin" required>
-    <input name="destination" placeholder="Destination" required>
+<input id="searchInput" placeholder="Search...">
 
-    <input name="layoverMinutes" type="number" placeholder="Layover">
-    <input name="transferPoints" type="number" placeholder="Transfers">
-    <input name="terminalDistance" type="number" placeholder="Distance">
-    <input name="incomingDelay" type="number" placeholder="Delay">
-    <input name="checkedBags" type="number" placeholder="Bags">
+<form id="assessmentForm">
+  <input name="passengerName" placeholder="Passenger Name" required>
+  <input name="bookingReference" placeholder="Booking Ref" required>
+  <input name="bagTag" placeholder="Bag Tag" required>
+  <input name="flightNumber" placeholder="Flight" required>
+  <input name="origin" placeholder="Origin" required>
+  <input name="destination" placeholder="Destination" required>
 
-    <button type="submit">Predict</button>
-  </form>
+  <input name="layoverMinutes" type="number" placeholder="Layover">
+  <input name="transferPoints" type="number" placeholder="Transfers">
+  <input name="terminalDistance" type="number" placeholder="Distance">
+  <input name="incomingDelay" type="number" placeholder="Delay">
+  <input name="checkedBags" type="number" placeholder="Bags">
 
-  <h2 id="riskTitle">No result</h2>
-  <p id="riskScore"></p>
+  <select name="baggageType">
+    <option value="transfer">Transfer</option>
+    <option value="fragile">Fragile</option>
+    <option value="priority">Priority</option>
+  </select>
 
-  <table border="1">
-    <thead>
-      <tr>
-        <th>Passenger</th>
-        <th>Flight</th>
-        <th>Risk</th>
-      </tr>
-    </thead>
-    <tbody id="recordsTableBody"></tbody>
-  </table>
+  <label><input type="checkbox" name="priorityStatus"> Priority</label>
+  <label><input type="checkbox" name="internationalTransfer" checked> International</label>
 
-  <!-- FIXED JS LINK -->
-  <script src="script.js"></script>
+  <button type="submit">Predict</button>
+</form>
+
+<h2 id="riskTitle">No result</h2>
+<p id="riskScore"></p>
+<p id="riskReason"></p>
+
+<ul id="recommendationList"></ul>
+
+<h3>Stats</h3>
+<p>Total: <span id="statsTotal">0</span></p>
+<p>High Risk: <span id="statsHigh">0</span></p>
+<p>Average: <span id="statsAverage">0%</span></p>
+
+<table border="1">
+<thead>
+<tr>
+<th>Passenger</th>
+<th>Flight</th>
+<th>Route</th>
+<th>Bag</th>
+<th>Risk</th>
+<th>Score</th>
+<th>Time</th>
+</tr>
+</thead>
+
+<tbody id="recordsTableBody"></tbody>
+</table>
+
+<script src="script.js"></script>
 
 </body>
 </html>
