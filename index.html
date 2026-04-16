@@ -57,7 +57,7 @@
                 <div class="input-group"><label>Terminal distance (m)</label><input type="number" name="distance" value="1200"></div>
                 <div class="input-group"><label>Incoming delay (min)</label><input type="number" name="delay" value="18"></div>
                 <div class="input-group"><label>Checked bags</label><input type="number" name="bags" value="2"></div>
-                <div class="input-group"><label>Baggage type</label><select name="type"><option>Transfer</option><option>Fragile</option><option>Priority</option></select></div>
+                <div class="input-group"><label>Baggage type</label><select name="type"><option>Transfer</option><option>Priority</option><option>Fragile</option></select></div>
 
                 <div class="checkbox-row">
                     <label class="pill-check"><input type="checkbox" name="isPriority"> Priority status</label>
@@ -82,7 +82,10 @@
     </div>
 
     <section class="card">
-        <h2 class="serif">Transfer monitoring log</h2>
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 class="serif">Transfer monitoring log</h2>
+            <input type="text" id="searchInput" placeholder="Search passenger..." style="width: 250px; padding: 10px; border-radius: 50px; border: 1px solid #E1C9D5;">
+        </div>
         <div class="table-container">
             <table>
                 <thead>
