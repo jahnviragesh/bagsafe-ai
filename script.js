@@ -1,14 +1,15 @@
-const KEY = "BagSafe_Final_v1";
+const KEY = "BagSafe_Operational_V1";
 let logs = JSON.parse(localStorage.getItem(KEY)) || [];
 
 const form = document.getElementById('assessmentForm');
 
+// PREDICT AND SAVE FUNCTIONALITY
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     const fd = new FormData(form);
     const data = Object.fromEntries(fd.entries());
     
-    // Logic
+    // Risk Algorithm
     let score = 25;
     if (Number(data.layover) < 45) score += 40;
     if (Number(data.delay) > 15) score += 20;
@@ -19,7 +20,7 @@ form.addEventListener('submit', (e) => {
 
     const entry = {
         id: Date.now(),
-        name: data.passengerName || "N/A",
+        name: data.passengerName || "Unnamed",
         flight: (data.flightNumber || "N/A").toUpperCase(),
         risk, score,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -28,36 +29,53 @@ form.addEventListener('submit', (e) => {
     logs.unshift(entry);
     localStorage.setItem(KEY, JSON.stringify(logs));
     
-    updateUI(risk, score);
+    updateDisplay(risk, score);
     renderTable();
 });
 
-function updateUI(risk, score) {
+// UI UPDATE LOGIC
+function updateDisplay(risk, score) {
     document.getElementById('riskBadge').innerText = risk;
     document.getElementById('riskScore').innerText = score + "%";
     document.getElementById('heroStatus').innerText = risk === "High" ? "Alert" : "Secure";
-    document.getElementById('riskTitle').innerText = risk === "High" ? "Attention Required" : "Risk Minimal";
+    document.getElementById('riskTitle').innerText = risk === "High" ? "Action Required" : "Risk Minimal";
 }
 
+// DELETE INDIVIDUAL LOG
 function deleteEntry(id) {
     logs = logs.filter(l => l.id !== id);
     localStorage.setItem(KEY, JSON.stringify(logs));
     renderTable();
 }
 
+// CLEAR ALL BUTTON
 document.getElementById('clearAllBtn').onclick = () => {
-    if(confirm("Wipe all monitoring data?")) {
+    if(confirm("Permanently wipe all monitoring logs?")) {
         logs = [];
         localStorage.removeItem(KEY);
         renderTable();
     }
 };
 
+// USE SAMPLE DATA BUTTON
 document.getElementById('fillSampleBtn').onclick = () => {
-    const s = { passengerName: "Aisha Rahman", flightNumber: "EK211", bagTag: "BG-1001", origin: "DXB", destination: "LHR", layover: 55, delay: 18 };
+    const s = { 
+        passengerName: "Aisha Rahman", 
+        flightNumber: "EK211", 
+        bookingReference: "BRG472", 
+        bagTag: "BG-1001", 
+        origin: "DXB", 
+        destination: "LHR", 
+        layover: 55, 
+        delay: 18 
+    };
     Object.keys(s).forEach(k => { if(form.elements[k]) form.elements[k].value = s[k]; });
 };
 
+// RESET FORM BUTTON
+document.getElementById('clearBtn').onclick = () => form.reset();
+
+// TABLE RENDERING & STATS
 function renderTable() {
     const q = document.getElementById('searchInput').value.toLowerCase();
     const filtered = logs.filter(l => l.name.toLowerCase().includes(q) || l.flight.toLowerCase().includes(q));
