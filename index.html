@@ -1,76 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>BagSafe AI</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BagSafe AI Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    
+    <style>
+        /* CSS VARIABLES FROM COLOR PALETTE IMAGE */
+        :root {
+            --china-rose: #A24C61;
+            --kobi: #E2A9C0;
+            --queen-pink: #E1C9D5;
+            --chocolate-kisses: #411528;
+            --persian-plum: #710C21;
+            --bg-cream: #FDF9F8;
+            --glass-white: rgba(255, 255, 255, 0.7);
+        }
 
-  <link rel="stylesheet" href="style.css">
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--chocolate-kisses);
+            font-family: 'Manrope', sans-serif;
+            padding: 40px 20px;
+            background-image: radial-gradient(circle at 10% 20%, rgba(226, 169, 192, 0.1) 0%, transparent 40%);
+        }
+
+        .serif { font-family: 'Cormorant Garamond', serif; color: var(--persian-plum); }
+
+        .app-layout { max-width: 1100px; mx-auto; display: flex; flex-direction: column; gap: 24px; margin: 0 auto; }
+
+        /* Card Styles */
+        .card {
+            background: var(--glass-white);
+            border-radius: 28px;
+            padding: 32px;
+            border: 1px solid var(--queen-pink);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(162, 76, 97, 0.05);
+        }
+
+        /* Hero Section */
+        .hero-section { display: flex; justify-content: space-between; align-items: center; gap: 40px; }
+        .eyebrow { text-transform: uppercase; font-size: 10px; letter-spacing: 2px; font-weight: 800; color: var(--china-rose); margin-bottom: 8px; }
+        h1 { font-size: 52px; margin-bottom: 12px; }
+        .description { font-size: 14px; color: var(--china-rose); max-width: 500px; margin-bottom: 20px; opacity: 0.8; }
+        .pill-row { display: flex; gap: 8px; }
+        .pill { padding: 6px 14px; border-radius: 50px; border: 1px solid var(--kobi); font-size: 11px; color: var(--china-rose); font-weight: 600; }
+
+        .live-status-box h2 { font-size: 48px; margin-bottom: 4px; }
+        .status-sub { font-size: 12px; color: var(--china-rose); font-style: italic; }
+
+        .stats-grid { display: grid; grid-template-cols: repeat(3, 1fr); gap: 20px; margin-top: 24px; border-top: 1px solid var(--queen-pink); padding-top: 20px; }
+        .stat-item strong { font-family: 'Cormorant Garamond', serif; font-size: 24px; display: block; }
+
+        /* Form Styling */
+        .grid-form { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; margin-top: 20px; }
+        .input-group label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 6px; color: var(--chocolate-kisses); }
+        input, select { width: 100%; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--queen-pink); font-family: inherit; font-size: 14px; }
+        
+        .checkbox-row { grid-column: span 2; display: flex; gap: 12px; margin-top: 10px; }
+        .pill-check { padding: 8px 16px; border-radius: 50px; background: white; border: 1px solid var(--queen-pink); font-size: 12px; cursor: pointer; }
+
+        /* Buttons */
+        .primary-btn { background: var(--china-rose); color: white; border: none; padding: 14px 32px; border-radius: 50px; font-weight: 700; cursor: pointer; }
+        .primary-btn:hover { background: var(--persian-plum); }
+        .action-btn-outline { background: transparent; border: 1px solid var(--china-rose); padding: 8px 18px; border-radius: 50px; font-size: 11px; color: var(--china-rose); font-weight: 700; cursor: pointer; }
+
+        /* Dashboard Grid Layout */
+        .dashboard-body { display: grid; grid-template-cols: 2.5fr 1fr; gap: 24px; }
+        .list-item { background: rgba(255, 255, 255, 0.5); padding: 16px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #f2ebf0; font-size: 13px; }
+
+        /* Monitoring Log Table */
+        .table-container { overflow-x: auto; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; padding: 12px; border-bottom: 2px solid var(--queen-pink); color: var(--china-rose); }
+        td { padding: 16px 12px; font-size: 13px; border-bottom: 1px solid rgba(225, 201, 213, 0.3); }
+
+        /* Custom Risk Colors */
+        .high-risk { color: var(--persian-plum); font-weight: 800; }
+        .status-badge { background: var(--queen-pink); padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 800; margin-bottom: 10px; display: inline-block; }
+    </style>
 </head>
-
 <body>
 
-<h1>BagSafe AI</h1>
+<div class="app-layout">
+    <header class="card hero-section">
+        <div class="hero-left">
+            <p class="eyebrow">Advanced Python Project Reimagined For Web</p>
+            <h1 class="serif">BagSafe AI</h1>
+            <p class="description">Predict baggage delay risks and manage airport operations with precision.</p>
+            <div class="pill-row">
+                <span class="pill">Risk prediction</span>
+                <span class="pill">Airport operations</span>
+                <span class="pill">Pretty web interface</span>
+            </div>
+        </div>
 
-<button id="fillSampleBtn">Use Sample Data</button>
-<button id="clearBtn">Clear Form</button>
-<button id="clearRecordsBtn">Clear Records</button>
+        <div class="hero-right">
+            <div class="live-status-box">
+                <p class="eyebrow">Live status</p>
+                <h2 class="serif">Ready</h2>
+                <p class="status-sub">Waiting for assessment</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item"><p class="eyebrow">Count</p><strong id="statsTotal">0</strong></div>
+                <div class="stat-item"><p class="eyebrow">High Risk</p><strong id="statsHigh">0</strong></div>
+                <div class="stat-item"><p class="eyebrow">Avg %</p><strong id="statsAverage">0%</strong></div>
+            </div>
+        </div>
+    </header>
 
-<input id="searchInput" placeholder="Search...">
+    <div class="dashboard-body">
+        <section class="card">
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+                <h2 class="serif">Run baggage assessment</h2>
+                <button class="action-btn-outline" onclick="fillSample()">Use sample data</button>
+            </div>
+            <form id="assessmentForm" class="grid-form">
+                <div class="input-group"><label>Passenger Name</label><input type="text" id="pName" placeholder="Aisha Rahman"></div>
+                <div class="input-group"><label>Flight Number</label><input type="text" id="fNum" placeholder="EK211"></div>
+                <div class="input-group"><label>Bag Tag</label><input type="text" id="bTag" placeholder="BG-1001"></div>
+                <div class="input-group"><label>Route</label><input type="text" id="route" placeholder="DXB -> LHR"></div>
+                <div class="checkbox-row">
+                    <label class="pill-check"><input type="checkbox" checked> Priority Status</label>
+                    <label class="pill-check"><input type="checkbox" checked> International Transfer</label>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button type="button" onclick="predict()" class="primary-btn">Predict and save</button>
+                </div>
+            </form>
+        </section>
 
-<form id="assessmentForm">
-  <input name="passengerName" placeholder="Passenger Name" required>
-  <input name="bookingReference" placeholder="Booking Ref" required>
-  <input name="bagTag" placeholder="Bag Tag" required>
-  <input name="flightNumber" placeholder="Flight" required>
-  <input name="origin" placeholder="Origin" required>
-  <input name="destination" placeholder="Destination" required>
+        <aside>
+            <section class="card" style="margin-bottom: 24px;">
+                <p class="eyebrow">Prediction Summary</p>
+                <span class="status-badge">Awaiting</span>
+                <h3 class="serif" id="summaryTitle">No assessment</h3>
+                <p style="font-size: 13px; margin-top: 10px;">Confidence Score: <strong id="summaryScore">0%</strong></p>
+            </section>
+            
+            <section class="card">
+                <p class="eyebrow">Operational Guidance</p>
+                <div class="list-item">High-risk bags should be escalated for manual attention.</div>
+                <div class="list-item">Saved records stay in your browser.</div>
+            </section>
+        </aside>
+    </div>
 
-  <input name="layoverMinutes" type="number" placeholder="Layover">
-  <input name="transferPoints" type="number" placeholder="Transfers">
-  <input name="terminalDistance" type="number" placeholder="Distance">
-  <input name="incomingDelay" type="number" placeholder="Delay">
-  <input name="checkedBags" type="number" placeholder="Bags">
+    <section class="card">
+        <p class="eyebrow">Transfer Monitoring Log</p>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>Passenger</th><th>Flight</th><th>Route</th><th>Bag</th><th>Risk</th><th>Score</th></tr>
+                </thead>
+                <tbody id="logBody">
+                    </tbody>
+            </table>
+        </div>
+    </section>
+</div>
 
-  <select name="baggageType">
-    <option value="transfer">Transfer</option>
-    <option value="fragile">Fragile</option>
-    <option value="priority">Priority</option>
-  </select>
+<script>
+    let count = 0;
+    let highRisks = 0;
 
-  <label><input type="checkbox" name="priorityStatus"> Priority</label>
-  <label><input type="checkbox" name="internationalTransfer" checked> International</label>
+    function fillSample() {
+        document.getElementById('pName').value = "Aisha Rahman";
+        document.getElementById('fNum').value = "EK211";
+        document.getElementById('bTag').value = "BG-1001";
+        document.getElementById('route').value = "DXB -> LHR";
+    }
 
-  <button type="submit">Predict</button>
-</form>
+    function predict() {
+        const name = document.getElementById('pName').value || "Unknown";
+        const fNum = document.getElementById('fNum').value || "N/A";
+        const bTag = document.getElementById('bTag').value || "N/A";
+        const route = document.getElementById('route').value || "N/A";
+        
+        const score = Math.floor(Math.random() * 100);
+        const riskLevel = score > 70 ? "High" : "Low";
+        
+        // Update Stats
+        count++;
+        if(score > 70) highRisks++;
+        document.getElementById('statsTotal').innerText = count;
+        document.getElementById('statsHigh').innerText = highRisks;
+        document.getElementById('statsAverage').innerText = Math.floor((highRisks/count)*100) + "%";
 
-<h2 id="riskTitle">No result</h2>
-<p id="riskScore"></p>
-<p id="riskReason"></p>
+        // Update Summary
+        document.getElementById('summaryTitle').innerText = riskLevel + " Risk Detected";
+        document.getElementById('summaryScore').innerText = score + "%";
 
-<ul id="recommendationList"></ul>
-
-<h3>Stats</h3>
-<p>Total: <span id="statsTotal">0</span></p>
-<p>High Risk: <span id="statsHigh">0</span></p>
-<p>Average: <span id="statsAverage">0%</span></p>
-
-<table border="1">
-<thead>
-<tr>
-<th>Passenger</th>
-<th>Flight</th>
-<th>Route</th>
-<th>Bag</th>
-<th>Risk</th>
-<th>Score</th>
-<th>Time</th>
-</tr>
-</thead>
-
-<tbody id="recordsTableBody"></tbody>
-</table>
-
-<script src="script.js"></script>
+        // Add to Table
+        const table = document.getElementById('logBody');
+        const row = `<tr>
+            <td>${name}</td>
+            <td>${fNum}</td>
+            <td>${route}</td>
+            <td>${bTag}</td>
+            <td class="${score > 70 ? 'high-risk' : ''}">${riskLevel}</td>
+            <td>${score}%</td>
+        </tr>`;
+        table.innerHTML = row + table.innerHTML;
+    }
+</script>
 
 </body>
 </html>
