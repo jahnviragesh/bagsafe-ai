@@ -24,51 +24,49 @@
                 <div class="status-main">
                     <p class="eyebrow">System Status</p>
                     <h2 class="serif" id="heroStatus">Ready</h2>
+                    <p class="status-sub">Waiting for a new assessment</p>
                 </div>
                 <div class="stats-grid">
-                    <div class="stat-item"><p class="eyebrow">Total</p><strong id="statsTotal">0</strong></div>
+                    <div class="stat-item"><p class="eyebrow">Assessments</p><strong id="statsTotal">0</strong></div>
                     <div class="stat-item"><p class="eyebrow">High Risk</p><strong id="statsHigh">0</strong></div>
                     <div class="stat-item"><p class="eyebrow">Avg Score</p><strong id="statsAvg">0%</strong></div>
                 </div>
             </div>
         </header>
 
-        <section class="card section-spacing">
+        <section class="card">
             <div class="card-header">
-                <h2 class="serif">Assessment Input</h2>
-                <button type="button" class="action-btn-outline" id="fillSampleBtn">Sample Data</button>
+                <div>
+                    <p class="eyebrow">Transfer Input</p>
+                    <h2 class="serif">Run a baggage assessment</h2>
+                </div>
+                <button type="button" class="action-btn-outline" id="fillSampleBtn">Use sample data</button>
             </div>
 
             <form id="assessmentForm" class="grid-form">
                 <div class="input-group"><label>Passenger Name</label><input type="text" name="passengerName" placeholder="Aisha Rahman"></div>
-                <div class="input-group"><label>Flight Number</label><input type="text" name="flightNumber" placeholder="EK211"></div>
+                <div class="input-group"><label>Booking Reference</label><input type="text" name="bookingReference" placeholder="BRG472"></div>
                 <div class="input-group"><label>Bag Tag</label><input type="text" name="bagTag" placeholder="BG-1001"></div>
-                <div class="input-group"><label>Layover (min)</label><input type="number" name="layover" value="55"></div>
+                <div class="input-group"><label>Flight Number</label><input type="text" name="flightNumber" placeholder="EK211"></div>
                 <div class="input-group"><label>Origin</label><input type="text" name="origin" placeholder="DXB"></div>
                 <div class="input-group"><label>Destination</label><input type="text" name="destination" placeholder="LHR"></div>
-                <div class="input-group"><label>Delay (min)</label><input type="number" name="delay" value="18"></div>
-                <div class="input-group">
-                    <label>Baggage Type</label>
-                    <select name="type">
-                        <option>Transfer</option>
-                        <option>Priority</option>
-                    </select>
-                </div>
+                <div class="input-group"><label>Layover (min)</label><input type="number" name="layover" value="55"></div>
+                <div class="input-group"><label>Incoming Delay (min)</label><input type="number" name="delay" value="18"></div>
 
                 <div class="checkbox-row">
                     <label class="pill-check"><input type="checkbox" name="isPriority"> Priority Status</label>
-                    <label class="pill-check"><input type="checkbox" name="isIntl" checked> International</label>
+                    <label class="pill-check"><input type="checkbox" name="isIntl" checked> International Transfer</label>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="primary-btn">Predict & Save</button>
-                    <button type="button" class="action-btn-outline" id="clearBtn">Reset</button>
+                    <button type="button" class="action-btn-outline" id="clearBtn">Clear Form</button>
                 </div>
             </form>
         </section>
 
         <div class="info-grid">
-            <section class="card summary-card">
+            <section class="card result-card">
                 <p class="eyebrow">Latest Result</p>
                 <div class="status-badge" id="riskBadge">Waiting</div>
                 <h2 class="serif" id="riskTitle">Pending Analysis</h2>
@@ -85,7 +83,7 @@
             </section>
         </div>
 
-        <section class="card section-spacing">
+        <section class="card">
             <p class="eyebrow">What This Shows</p>
             <div class="explanation-container">
                 <div class="explanation-item">
@@ -103,8 +101,26 @@
             </div>
         </section>
 
-        <section class="card section-spacing">
+        <section class="card">
             <div class="card-header">
-                <h2 class="serif">Monitoring Log</h2>
+                <h2 class="serif">Transfer monitoring log</h2>
                 <div class="table-controls">
-                    <input type="text"
+                    <input type="text" id="searchInput" placeholder="Search passenger, flight..." class="search-box">
+                    <button type="button" class="action-btn-outline" id="clearAllBtn">Clear All</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Passenger</th><th>Flight</th><th>Risk</th><th>Score</th><th>Saved</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
