@@ -1,5 +1,4 @@
 const STORAGE_KEY = "bagsafe_laptop_v1";
-
 const form = document.getElementById('assessmentForm');
 let records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
@@ -8,97 +7,108 @@ form.addEventListener('submit', (e) => {
     const fd = new FormData(form);
     const data = Object.fromEntries(fd.entries());
     
-    // Convert numbers
-    data.layoverMinutes = Number(data.layoverMinutes);
-    data.transferPoints = Number(data.transferPoints);
-    data.incomingDelay = Number(data.incomingDelay);
-    data.terminalDistance = Number(data.terminalDistance);
-    data.priorityStatus = form.elements.namedItem("priorityStatus").checked;
+    // Data Parsing
+    data.layover = Number(data.layover);
+    data.delay = Number(data.delay);
+    data.distance = Number(data.distance);
+    data.points = Number(data.points);
+    const isPriority = form.elements.namedItem("isPriority").checked;
 
-    // Advanced Prediction logic based on multiple factors
-    let score = 10; // Baseline risk
-    const reasons = [];
+    // Advanced Prediction Logic
+    let score = 15; // Baseline
+    
+    if (data.layover < 45) score += 50;
+    else if (data.layover < 75) score += 25;
 
-    // Layover time is critical
-    if (data.layoverMinutes < 45) { score += 50; reasons.push("Critical connection time."); }
-    else if (data.layoverMinutes < 70) { score += 25; reasons.push("Very tight layover window."); }
+    if (data.delay > 30) score += 20;
+    else if (data.delay > 15) score += 10;
 
-    // Delay factor
-    if (data.incomingDelay > 30) { score += 20; reasons.push("Significant incoming delay."); }
-    else if (data.incomingDelay > 15) { score += 10; reasons.push("Minor incoming delay."); }
+    if (data.distance > 1300) score += 15;
+    if (data.points > 2) score += 10;
 
-    // Distance factor
-    if (data.terminalDistance > 1300) { score += 15; reasons.push("Long terminal distance."); }
+    // Reduction for priority
+    if (data.type === "Priority" || isPriority) score -= 20;
 
-    // Complexity
-    if (data.transferPoints > 2) { score += 8; reasons.push("Multiple connection points."); }
-
-    // Type reduction
-    if (data.baggageType === "priority" || data.priorityStatus) { score -= 15; reasons.push("Priority handling decreases risk."); }
-
-    // Normalize score
     score = Math.max(5, Math.min(99, score));
-    const risk = score > 65 ? "High" : score > 35 ? "Medium" : "Low";
-
-    const operationalRules = {
-        High: ["Flag for direct tarmac transfer.", "Manual supervisor assigned.", "Prioritize over transfer bags."],
-        Medium: ["Flag on monitor log.", "Notify receiving gate.", "Standard manual check at transfer point."],
-        Low: ["Routine transfer.", "Standard automated sort.", "Routine dashboard view."]
-    };
+    const risk = score > 70 ? "High" : score > 40 ? "Medium" : "Low";
 
     const newRecord = {
-        passengerName: data.passengerName,
-        flightNumber: data.flightNumber.toUpperCase(),
-        route: `${data.origin.toUpperCase()}-${data.destination.toUpperCase()}`,
-        bagTag: data.bagTag.toUpperCase(),
-        risk, score, reasons,
-        guidance: operationalRules[risk],
-        time: new Date().toLocaleTimeString()
+        passengerName: data.passengerName || "Unknown",
+        flightNumber: (data.flightNumber || "N/A").toUpperCase(),
+        route: `${(data.origin || "???").toUpperCase()}→${(data.destination || "???").toUpperCase()}`,
+        bagTag: (data.bagTag || "N/A").toUpperCase(),
+        risk, 
+        score,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
     records.unshift(newRecord);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
     
-    updateSummaryUI(risk, score, reasons);
-    updateGuidanceUI(operationalRules[risk]);
+    updateUI(risk, score);
     renderTable();
 });
 
-function updateSummaryUI(risk, score, reasons) {
-    document.getElementById('riskBadge').textContent = risk;
-    document.getElementById('riskBadge').className = `status-pill ${risk.toLowerCase()}`; // Add class for styling if needed
-    document.getElementById('riskTitle').textContent = `${risk} connection failure probability detected.`;
-    document.getElementById('riskScore').textContent = `${score}%`;
-    document.getElementById('heroRiskLabel').textContent = risk;
-}
+function updateUI(risk, score) {
+    // Update Summary Card
+    const badge = document.getElementById('riskBadge');
+    const title = document.getElementById('riskTitle');
+    const hero = document.getElementById('heroStatus');
 
-function updateGuidanceUI(recommendations) {
-    const list = document.getElementById('recommendationList');
-    list.innerHTML = recommendations.map(rec => `<div class="list-item">${rec}</div>`).join("");
+    badge.textContent = risk + " Risk";
+    title.textContent = risk === "High" ? "Escalation Required" : "Standard Handling";
+    document.getElementById('riskScore').textContent = score + "%";
+
+    // Update Hero Status
+    hero.textContent = risk === "High" ? "Risk Alert" : "Clear";
+    hero.style.color = risk === "High" ? "#710C21" : "#411528";
 }
 
 function renderTable() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = records.filter(r => r.passengerName.toLowerCase().includes(query));
+    const logBody = document.getElementById('logBody');
     
-    document.getElementById('recordsTableBody').innerHTML = filtered.map(r => `
+    // Update Header Stats
+    const highRiskCount = records.filter(r => r.risk === "High").length;
+    const avgScore = records.length > 0 
+        ? Math.round(records.reduce((acc, r) => acc + r.score, 0) / records.length) 
+        : 0;
+
+    document.getElementById('statsTotal').textContent = records.length;
+    document.getElementById('statsHigh').textContent = highRiskCount;
+    document.getElementById('statsAvg').textContent = avgScore + "%";
+
+    // Render Rows
+    logBody.innerHTML = records.map(r => `
         <tr>
             <td><strong>${r.passengerName}</strong></td>
             <td>${r.flightNumber}</td>
             <td>${r.route}</td>
-            <td><strong>${r.risk}</strong></td>
+            <td style="color:${r.risk === 'High' ? '#710C21' : '#2e7d32'}; font-weight:800">${r.risk}</td>
             <td>${r.score}%</td>
             <td>${r.time}</td>
         </tr>
     `).join('');
-    document.getElementById('statsTotal').textContent = records.length;
 }
 
+// Fill Sample Data
 document.getElementById('fillSampleBtn').onclick = () => {
-    const sample = { passengerName: "Aisha Rahman", bookingReference: "BRG472", bagTag: "BAG-88", flightNumber: "EK211", origin: "DXB", destination: "LHR", layoverMinutes: 55, transferPoints: 2, terminalDistance: 1200, incomingDelay: 18, checkedBags: 2, baggageType: "transfer" };
-    Object.keys(sample).forEach(key => form.elements[key].value = sample[key]);
+    const sample = { 
+        passengerName: "Aisha Rahman", 
+        bookingReference: "BRG472", 
+        bagTag: "BG-1001", 
+        flightNumber: "EK211", 
+        origin: "DXB", 
+        destination: "LHR", 
+        layover: 55, 
+        points: 2, 
+        distance: 1200, 
+        delay: 18, 
+        bags: 2 
+    };
+    Object.keys(sample).forEach(key => {
+        if(form.elements[key]) form.elements[key].value = sample[key];
+    });
 };
 
-document.getElementById('searchInput').addEventListener('input', renderTable);
-
+// Initial Load
 renderTable();
