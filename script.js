@@ -1,4 +1,4 @@
-﻿const STORAGE_KEY = "bagsafe-web-records-v1";
+const STORAGE_KEY = "bagsafe-web-records-v1";
 
 
 const form = document.getElementById("assessmentForm");
