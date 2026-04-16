@@ -1,13 +1,7 @@
-const form = document.getElementById("assessmentForm");
-const fillSampleBtn = document.getElementById("fillSampleBtn");
-const clearBtn = document.getElementById("clearBtn");
-const table = document.getElementById("recordsTableBody");
+const STORAGE_KEY = "bagsafe-records";
 
-const riskTitle = document.getElementById("riskTitle");
-const riskScore = document.getElementById("riskScore");
-
-// SAMPLE DATA
-const sample = {
+// SAMPLE DATA (FIXED BUG)
+const sampleAssessment = {
   passengerName: "Aisha Rahman",
   bookingReference: "BRG472",
   bagTag: "BG-1001",
@@ -19,43 +13,134 @@ const sample = {
   terminalDistance: 1200,
   incomingDelay: 18,
   checkedBags: 2,
+  baggageType: "transfer",
+  priorityStatus: false,
+  internationalTransfer: true,
 };
 
-// SAMPLE BUTTON
-fillSampleBtn.onclick = () => {
-  Object.entries(sample).forEach(([key, value]) => {
-    form.elements[key].value = value;
-  });
-};
+const form = document.getElementById("assessmentForm");
+const fillSampleBtn = document.getElementById("fillSampleBtn");
+const clearBtn = document.getElementById("clearBtn");
+const clearRecordsBtn = document.getElementById("clearRecordsBtn");
+const searchInput = document.getElementById("searchInput");
+const tableBody = document.getElementById("recordsTableBody");
 
-// CLEAR
+const riskTitle = document.getElementById("riskTitle");
+const riskScore = document.getElementById("riskScore");
+const riskReason = document.getElementById("riskReason");
+const recommendationList = document.getElementById("recommendationList");
+
+const statsTotal = document.getElementById("statsTotal");
+const statsHigh = document.getElementById("statsHigh");
+const statsAverage = document.getElementById("statsAverage");
+
+let records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+// ---------------- SAMPLE BUTTON ----------------
+fillSampleBtn.onclick = () => fillForm(sampleAssessment);
+
+// ---------------- CLEAR ----------------
 clearBtn.onclick = () => form.reset();
 
-// SIMPLE AI LOGIC
-function calculateRisk(data) {
-  let score = data.incomingDelay + data.transferPoints * 10;
+// ---------------- CLEAR RECORDS ----------------
+clearRecordsBtn.onclick = () => {
+  if (!confirm("Clear all records?")) return;
+  records = [];
+  save();
+  render();
+};
 
-  if (score < 30) return { risk: "Low", score };
-  if (score < 70) return { risk: "Medium", score };
-  return { risk: "High", score };
+// ---------------- FILL FORM ----------------
+function fillForm(data) {
+  Object.entries(data).forEach(([key, val]) => {
+    if (form[key]) {
+      if (form[key].type === "checkbox") form[key].checked = val;
+      else form[key].value = val;
+    }
+  });
 }
 
-// SUBMIT
+// ---------------- SAVE ----------------
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+// ---------------- AI LOGIC ----------------
+function calculate(data) {
+  let score = 10;
+
+  score += data.incomingDelay * 1.5;
+  score += data.transferPoints * 10;
+  score += data.terminalDistance / 200;
+
+  if (data.layoverMinutes < 45) score += 30;
+  if (data.priorityStatus) score -= 15;
+
+  score = Math.round(score);
+
+  let risk = "Low";
+  if (score >= 70) risk = "High";
+  else if (score >= 40) risk = "Medium";
+
+  return { risk, score };
+}
+
+// ---------------- SUBMIT ----------------
 form.onsubmit = (e) => {
   e.preventDefault();
 
   const data = Object.fromEntries(new FormData(form));
-  const result = calculateRisk(data);
+  data.priorityStatus = form.priorityStatus.checked;
+  data.internationalTransfer = form.internationalTransfer.checked;
+
+  const result = calculate(data);
 
   riskTitle.textContent = result.risk;
   riskScore.textContent = "Score: " + result.score;
 
-  const row = document.createElement("tr");
-  row.innerHTML = `
-    <td>${data.passengerName}</td>
-    <td>${data.flightNumber}</td>
-    <td>${result.risk}</td>
-  `;
+  const record = {
+    ...data,
+    risk: result.risk,
+    score: result.score,
+    time: new Date().toLocaleString(),
+  };
 
-  table.appendChild(row);
+  records.unshift(record);
+  save();
+  render();
 };
+
+// ---------------- RENDER ----------------
+function render() {
+  const q = searchInput.value.toLowerCase();
+
+  const filtered = records.filter(r =>
+    Object.values(r).join(" ").toLowerCase().includes(q)
+  );
+
+  tableBody.innerHTML = filtered.map(r => `
+    <tr>
+      <td>${r.passengerName}</td>
+      <td>${r.flightNumber}</td>
+      <td>${r.origin} → ${r.destination}</td>
+      <td>${r.bagTag}</td>
+      <td>${r.risk}</td>
+      <td>${r.score}</td>
+      <td>${r.time}</td>
+    </tr>
+  `).join("");
+
+  statsTotal.textContent = records.length;
+  statsHigh.textContent = records.filter(r => r.risk === "High").length;
+
+  const avg = records.length
+    ? Math.round(records.reduce((a, b) => a + b.score, 0) / records.length)
+    : 0;
+
+  statsAverage.textContent = avg + "%";
+}
+
+searchInput.oninput = render;
+
+// INIT
+render();
