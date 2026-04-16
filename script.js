@@ -1,6 +1,5 @@
 const STORAGE_KEY = "bagsafe-web-records-v1";
 
-// The missing sample data object
 const sampleAssessment = {
     passengerName: "Aisha Rahman",
     bookingReference: "BRG472",
@@ -61,89 +60,94 @@ function fillForm(data) {
     });
 }
 
-function clearForm() {
-    form.reset();
-}
-
-function getFormData() {
-    const data = new FormData(form);
-    return {
-        passengerName: data.get("passengerName"),
-        bookingReference: data.get("bookingReference").toUpperCase(),
-        bagTag: data.get("bagTag").toUpperCase(),
-        flightNumber: data.get("flightNumber").toUpperCase(),
-        origin: data.get("origin").toUpperCase(),
-        destination: data.get("destination").toUpperCase(),
-        layoverMinutes: Number(data.get("layoverMinutes")),
-        transferPoints: Number(data.get("transferPoints")),
-        terminalDistance: Number(data.get("terminalDistance")),
-        incomingDelay: Number(data.get("incomingDelay")),
-        checkedBags: Number(data.get("checkedBags")),
-        baggageType: data.get("baggageType"),
-        priorityStatus: form.elements.namedItem("priorityStatus").checked,
-        internationalTransfer: form.elements.namedItem("internationalTransfer").checked,
-    };
-}
-
 function scoreAssessment(data) {
     let score = 15;
     const reasons = [];
+    if (data.layoverMinutes < 45) { score += 40; reasons.push("Extremely short layover."); }
+    else if (data.layoverMinutes < 75) { score += 20; reasons.push("Tight connection window."); }
+    
+    if (data.incomingDelay > 20) { score += 25; reasons.push("Incoming flight delay is significant."); }
+    if (data.terminalDistance > 1100) { score += 15; reasons.push("Long distance between gates."); }
+    
+    if (data.priorityStatus) { score -= 15; reasons.push("Priority status speeds up handling."); }
 
-    if (data.layoverMinutes < 45) { score += 40; reasons.push("Critical connection time."); }
-    else if (data.layoverMinutes < 90) { score += 20; reasons.push("Tight layover."); }
+    score = Math.max(5, Math.min(98, score));
+    let risk = score > 65 ? "High" : score > 35 ? "Medium" : "Low";
 
-    if (data.incomingDelay > 20) { score += 20; reasons.push("Incoming flight delayed."); }
-    if (data.terminalDistance > 1000) { score += 10; reasons.push("Long transfer distance."); }
+    const recs = {
+        High: ["Escalate for manual supervision.", "Prioritize loading immediately.", "Notify arrival supervisor."],
+        Medium: ["Flag for monitoring.", "Verify transfer at next point.", "Keep visible on dashboard."],
+        Low: ["Standard workflow.", "Routine monitoring.", "No intervention needed."]
+    };
 
-    score = Math.min(99, score);
-    let risk = score > 60 ? "High" : score > 30 ? "Medium" : "Low";
-
-    return { risk, score, reasons, recommendations: ["Escalate if High Risk", "Monitor if Medium"] };
+    return { risk, score, reasons, recommendations: recs[risk] };
 }
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const data = getFormData();
-    const result = scoreAssessment(data);
+    const data = new FormData(form);
+    const entries = Object.fromEntries(data.entries());
+    
+    // Process types
+    entries.layoverMinutes = Number(entries.layoverMinutes);
+    entries.incomingDelay = Number(entries.incomingDelay);
+    entries.terminalDistance = Number(entries.terminalDistance);
+    entries.priorityStatus = form.elements.namedItem("priorityStatus").checked;
+
+    const result = scoreAssessment(entries);
     
     const record = {
-        ...data,
-        id: Date.now(),
+        passengerName: entries.passengerName,
+        flightNumber: entries.flightNumber.toUpperCase(),
+        route: `${entries.origin.toUpperCase()}-${entries.destination.toUpperCase()}`,
+        bagTag: entries.bagTag.toUpperCase(),
         risk: result.risk,
         score: result.score,
-        route: `${data.origin}-${data.destination}`,
         savedAt: new Date().toLocaleTimeString()
     };
 
     records.unshift(record);
     saveRecords();
-    updateSummary(result);
+    
+    // Update UI
+    riskBadge.className = `risk-badge ${result.risk.toLowerCase()}`;
+    riskBadge.textContent = `${result.risk} Risk`;
+    riskTitle.textContent = `${result.risk} transfer risk detected`;
+    riskScore.textContent = `Confidence score: ${result.score}%`;
+    riskReason.textContent = result.reasons.join(" ");
+    heroRiskLabel.textContent = result.risk;
+    heroRiskHint.textContent = `${result.score}% confidence from latest check`;
+    
+    recommendationList.innerHTML = result.recommendations.map(r => `<div class="info-item"><p>${r}</p></div>`).join("");
+    
     renderTable();
 });
 
-function updateSummary(result) {
-    riskBadge.className = `risk-badge ${result.risk.toLowerCase()}`;
-    riskBadge.textContent = `${result.risk} Risk`;
-    riskTitle.textContent = `${result.risk} risk detected`;
-    riskScore.textContent = `Confidence: ${result.score}%`;
-    heroRiskLabel.textContent = result.risk;
-}
-
 function renderTable() {
-    recordsTableBody.innerHTML = records.map(r => `
+    const query = searchInput.value.toLowerCase();
+    const filtered = records.filter(r => r.passengerName.toLowerCase().includes(query));
+    
+    recordsTableBody.innerHTML = filtered.map(r => `
         <tr>
-            <td>${r.passengerName}</td>
+            <td><strong>${r.passengerName}</strong></td>
             <td>${r.flightNumber}</td>
             <td>${r.route}</td>
             <td>${r.bagTag}</td>
-            <td><span class="risk-badge ${r.risk.toLowerCase()}">${r.risk}</span></td>
+            <td><span class="risk-badge ${r.risk.toLowerCase()}" style="margin:0; font-size:0.7rem;">${r.risk}</span></td>
             <td>${r.score}%</td>
             <td>${r.savedAt}</td>
         </tr>
     `).join("");
+
     statsTotal.textContent = records.length;
+    statsHigh.textContent = records.filter(r => r.risk === 'High').length;
+    const avg = records.length ? Math.round(records.reduce((a, b) => a + b.score, 0) / records.length) : 0;
+    statsAverage.textContent = `${avg}%`;
 }
 
 fillSampleBtn.addEventListener("click", () => fillForm(sampleAssessment));
-clearBtn.addEventListener("click", clearForm);
+clearBtn.addEventListener("click", () => form.reset());
+clearRecordsBtn.addEventListener("click", () => { if(confirm("Clear log?")) { records = []; saveRecords(); renderTable(); }});
+searchInput.addEventListener("input", renderTable);
+
 renderTable();
