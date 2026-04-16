@@ -1,98 +1,80 @@
-const KEY = "BagSafe_Operational_V1";
-let logs = JSON.parse(localStorage.getItem(KEY)) || [];
+const STORAGE_KEY = "BagSafe_Operational_DB";
+let entries = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
 const form = document.getElementById('assessmentForm');
 
-// PREDICT AND SAVE FUNCTIONALITY
-form.addEventListener('submit', (e) => {
+// PREDICT AND SAVE
+form.onsubmit = (e) => {
     e.preventDefault();
     const fd = new FormData(form);
     const data = Object.fromEntries(fd.entries());
     
-    // Risk Algorithm
-    let score = 25;
-    if (Number(data.layover) < 45) score += 40;
-    if (Number(data.delay) > 15) score += 20;
+    // Risk Calculation
+    let score = 20;
+    if (Number(data.layover) < 45) score += 35;
+    if (Number(data.delay) > 15) score += 25;
     if (form.elements.isPriority.checked) score -= 15;
     
     score = Math.max(5, Math.min(99, score));
-    const risk = score > 70 ? "High" : score > 35 ? "Medium" : "Low";
+    const risk = score > 68 ? "High" : score > 35 ? "Medium" : "Low";
 
-    const entry = {
+    const newEntry = {
         id: Date.now(),
-        name: data.passengerName || "Unnamed",
-        flight: (data.flightNumber || "N/A").toUpperCase(),
+        name: data.passengerName || "Aisha Rahman",
+        flight: (data.flightNumber || "EK211").toUpperCase(),
+        route: `${data.origin} → ${data.destination}`,
+        tag: data.bagTag || "BG-1001",
         risk, score,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    logs.unshift(entry);
-    localStorage.setItem(KEY, JSON.stringify(logs));
+    entries.unshift(newEntry);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     
-    updateDisplay(risk, score);
+    updateUI(risk, score);
     renderTable();
-});
+};
 
-// UI UPDATE LOGIC
-function updateDisplay(risk, score) {
-    document.getElementById('riskBadge').innerText = risk;
+function updateUI(risk, score) {
+    const title = document.getElementById('riskTitle');
+    const badge = document.getElementById('riskBadge'); // Note: added id locally
+    
     document.getElementById('riskScore').innerText = score + "%";
     document.getElementById('heroStatus').innerText = risk === "High" ? "Alert" : "Secure";
-    document.getElementById('riskTitle').innerText = risk === "High" ? "Action Required" : "Risk Minimal";
+    title.innerText = risk === "High" ? "Action Required" : "Risk Minimal";
 }
 
-// DELETE INDIVIDUAL LOG
-function deleteEntry(id) {
-    logs = logs.filter(l => l.id !== id);
-    localStorage.setItem(KEY, JSON.stringify(logs));
-    renderTable();
-}
-
-// CLEAR ALL BUTTON
-document.getElementById('clearAllBtn').onclick = () => {
-    if(confirm("Permanently wipe all monitoring logs?")) {
-        logs = [];
-        localStorage.removeItem(KEY);
-        renderTable();
-    }
-};
-
-// USE SAMPLE DATA BUTTON
+// SAMPLE DATA
 document.getElementById('fillSampleBtn').onclick = () => {
-    const s = { 
-        passengerName: "Aisha Rahman", 
-        flightNumber: "EK211", 
-        bookingReference: "BRG472", 
-        bagTag: "BG-1001", 
-        origin: "DXB", 
-        destination: "LHR", 
-        layover: 55, 
-        delay: 18 
-    };
-    Object.keys(s).forEach(k => { if(form.elements[k]) form.elements[k].value = s[k]; });
+    const sample = { passengerName: "Aisha Rahman", flightNumber: "EK211", bookingReference: "BRG472", bagTag: "BG-1001", origin: "DXB", destination: "LHR", layover: 55, delay: 18 };
+    Object.keys(sample).forEach(key => { if(form.elements[key]) form.elements[key].value = sample[key]; });
 };
 
-// RESET FORM BUTTON
+// RESET/CLEAR
 document.getElementById('clearBtn').onclick = () => form.reset();
+document.getElementById('clearAllBtn').onclick = () => {
+    if(confirm("Wipe logs?")) { entries = []; localStorage.removeItem(STORAGE_KEY); renderTable(); }
+};
 
-// TABLE RENDERING & STATS
 function renderTable() {
     const q = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = logs.filter(l => l.name.toLowerCase().includes(q) || l.flight.toLowerCase().includes(q));
+    const list = entries.filter(e => e.name.toLowerCase().includes(q) || e.flight.toLowerCase().includes(q) || e.risk.toLowerCase().includes(q));
     
-    document.getElementById('statsTotal').innerText = logs.length;
-    document.getElementById('statsHigh').innerText = logs.filter(l => l.risk === "High").length;
-    const avg = logs.length ? Math.round(logs.reduce((a, b) => a + b.score, 0) / logs.length) : 0;
+    // Update Stats
+    document.getElementById('statsTotal').innerText = entries.length;
+    document.getElementById('statsHigh').innerText = entries.filter(e => e.risk === "High").length;
+    const avg = entries.length ? Math.round(entries.reduce((a, b) => a + b.score, 0) / entries.length) : 0;
     document.getElementById('statsAvg').innerText = avg + "%";
 
-    document.getElementById('logBody').innerHTML = filtered.map(l => `
+    document.getElementById('logBody').innerHTML = list.map(e => `
         <tr>
-            <td><strong>${l.name}</strong></td>
-            <td>${l.flight}</td>
-            <td style="color:${l.risk === 'High' ? '#710C21' : '#A24C61'}; font-weight:800">${l.risk}</td>
-            <td>${l.score}%</td>
-            <td>${l.time}</td>
-            <td><button class="del-btn" onclick="deleteEntry(${l.id})">Delete</button></td>
+            <td><strong>${e.name}</strong></td>
+            <td>${e.flight}</td>
+            <td>${e.route}</td>
+            <td>${e.tag}</td>
+            <td style="color:${e.risk === 'High' ? '#710C21' : '#A24C61'}; font-weight:800">${e.risk}</td>
+            <td>${e.score}%</td>
+            <td>${e.time}</td>
         </tr>
     `).join('');
 }
