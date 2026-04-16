@@ -1,15 +1,15 @@
-const STORAGE_KEY = "BagSafe_Operational_DB";
-let entries = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+const DB_KEY = "BagSafe_Final_Production";
+let logs = JSON.parse(localStorage.getItem(DB_KEY)) || [];
 
 const form = document.getElementById('assessmentForm');
 
-// PREDICT AND SAVE
+// PREDICT AND SAVE ACTION
 form.onsubmit = (e) => {
     e.preventDefault();
     const fd = new FormData(form);
     const data = Object.fromEntries(fd.entries());
     
-    // Risk Calculation
+    // Prediction Scoring Logic
     let score = 20;
     if (Number(data.layover) < 45) score += 35;
     if (Number(data.delay) > 15) score += 25;
@@ -18,63 +18,61 @@ form.onsubmit = (e) => {
     score = Math.max(5, Math.min(99, score));
     const risk = score > 68 ? "High" : score > 35 ? "Medium" : "Low";
 
-    const newEntry = {
+    const entry = {
         id: Date.now(),
         name: data.passengerName || "Aisha Rahman",
         flight: (data.flightNumber || "EK211").toUpperCase(),
-        route: `${data.origin} → ${data.destination}`,
+        route: `${data.origin || 'DXB'} → ${data.destination || 'LHR'}`,
         tag: data.bagTag || "BG-1001",
         risk, score,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    entries.unshift(newEntry);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    logs.unshift(entry);
+    localStorage.setItem(DB_KEY, JSON.stringify(logs));
     
-    updateUI(risk, score);
+    updateHeader(risk, score);
     renderTable();
 };
 
-function updateUI(risk, score) {
-    const title = document.getElementById('riskTitle');
-    const badge = document.getElementById('riskBadge'); // Note: added id locally
-    
+function updateHeader(risk, score) {
+    document.getElementById('riskBadge').innerText = risk;
     document.getElementById('riskScore').innerText = score + "%";
     document.getElementById('heroStatus').innerText = risk === "High" ? "Alert" : "Secure";
-    title.innerText = risk === "High" ? "Action Required" : "Risk Minimal";
+    document.getElementById('riskTitle').innerText = risk === "High" ? "Action Required" : "Risk Minimal";
 }
 
-// SAMPLE DATA
+// SAMPLE DATA LOADER
 document.getElementById('fillSampleBtn').onclick = () => {
-    const sample = { passengerName: "Aisha Rahman", flightNumber: "EK211", bookingReference: "BRG472", bagTag: "BG-1001", origin: "DXB", destination: "LHR", layover: 55, delay: 18 };
-    Object.keys(sample).forEach(key => { if(form.elements[key]) form.elements[key].value = sample[key]; });
+    const s = { passengerName: "Aisha Rahman", flightNumber: "EK211", bookingReference: "BRG472", bagTag: "BG-1001", origin: "DXB", destination: "LHR", layover: 55, delay: 18 };
+    Object.keys(s).forEach(k => { if(form.elements[k]) form.elements[k].value = s[k]; });
 };
 
-// RESET/CLEAR
+// CLEAR ACTIONS
 document.getElementById('clearBtn').onclick = () => form.reset();
 document.getElementById('clearAllBtn').onclick = () => {
-    if(confirm("Wipe logs?")) { entries = []; localStorage.removeItem(STORAGE_KEY); renderTable(); }
+    if(confirm("Clear all logs?")) { logs = []; localStorage.removeItem(DB_KEY); renderTable(); }
 };
 
 function renderTable() {
     const q = document.getElementById('searchInput').value.toLowerCase();
-    const list = entries.filter(e => e.name.toLowerCase().includes(q) || e.flight.toLowerCase().includes(q) || e.risk.toLowerCase().includes(q));
+    const filtered = logs.filter(l => l.name.toLowerCase().includes(q) || l.flight.toLowerCase().includes(q));
     
-    // Update Stats
-    document.getElementById('statsTotal').innerText = entries.length;
-    document.getElementById('statsHigh').innerText = entries.filter(e => e.risk === "High").length;
-    const avg = entries.length ? Math.round(entries.reduce((a, b) => a + b.score, 0) / entries.length) : 0;
+    // UPDATE DASHBOARD STATS
+    document.getElementById('statsTotal').innerText = logs.length;
+    document.getElementById('statsHigh').innerText = logs.filter(l => l.risk === "High").length;
+    const avg = logs.length ? Math.round(logs.reduce((a, b) => a + b.score, 0) / logs.length) : 0;
     document.getElementById('statsAvg').innerText = avg + "%";
 
-    document.getElementById('logBody').innerHTML = list.map(e => `
+    document.getElementById('logBody').innerHTML = filtered.map(l => `
         <tr>
-            <td><strong>${e.name}</strong></td>
-            <td>${e.flight}</td>
-            <td>${e.route}</td>
-            <td>${e.tag}</td>
-            <td style="color:${e.risk === 'High' ? '#710C21' : '#A24C61'}; font-weight:800">${e.risk}</td>
-            <td>${e.score}%</td>
-            <td>${e.time}</td>
+            <td><strong>${l.name}</strong></td>
+            <td>${l.flight}</td>
+            <td>${l.route}</td>
+            <td>${l.tag}</td>
+            <td style="color:${l.risk === 'High' ? '#710C21' : '#A24C61'}; font-weight:800">${l.risk}</td>
+            <td>${l.score}%</td>
+            <td>${l.time}</td>
         </tr>
     `).join('');
 }
