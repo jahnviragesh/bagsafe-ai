@@ -19,7 +19,7 @@ body {
 
 .app-layout { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 25px; }
 
-/* REUSABLE MAIN CARD */
+/* MAIN CARD */
 .main-card {
     background-color: var(--card-bg);
     border-radius: 40px;
@@ -36,27 +36,28 @@ body {
 .pill-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
 .pill { border: 1.5px solid var(--text-muted); color: var(--text-muted); border-radius: 50px; padding: 6px 18px; font-size: 11px; font-weight: 700; }
 
-/* STATUS CARD FIX */
+/* STATUS CARD SPACING FIX */
 .status-glass-card {
     background: rgba(255, 255, 255, 0.4);
     border-radius: 30px;
-    padding: 35px;
+    padding: 35px 50px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
+.status-main { text-align: left; }
 .status-main h2 { font-size: 48px; }
 .status-sub { font-size: 12px; font-weight: 600; margin-top: 5px; opacity: 0.6; }
 
-.stats-row { display: flex; gap: 40px; } /* SPACING ADDED */
-.stat-label { font-size: 10px; text-transform: uppercase; font-weight: 800; color: var(--text-muted); }
-.stat-group strong { font-size: 22px; display: block; margin-top: 4px; }
+.stats-row { display: flex; gap: 50px; text-align: left; }
+.stat-label { font-size: 10px; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; }
+.stat-group strong { font-size: 24px; display: block; }
 
 /* FORM */
 .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .field label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 8px; color: var(--accent-red); opacity: 0.8; }
-input, select { width: 100%; padding: 14px 18px; border-radius: 12px; border: none; background: var(--white); font-family: inherit; font-size: 13px; }
+input, select { width: 100%; padding: 14px 18px; border-radius: 12px; border: none; background: var(--white); font-family: inherit; font-size: 13px; outline: none; }
 
 .checkbox-container { grid-column: span 2; display: flex; gap: 12px; margin-top: 5px; }
 .check-pill { flex: 1; background: #EADCD1; padding: 16px; border-radius: 40px; text-align: center; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -74,7 +75,7 @@ input, select { width: 100%; padding: 14px 18px; border-radius: 12px; border: no
 .guidance-list li { background: var(--white); padding: 15px 25px; border-radius: 15px; font-size: 13px; display: flex; align-items: center; }
 .guidance-list li::before { content: "•"; color: var(--accent-red); font-weight: 900; margin-right: 12px; }
 
-/* WHAT THIS SHOWS */
+/* WHAT THIS SHOWS - CARD PER ITEM */
 .shows-wrapper { display: flex; flex-direction: column; gap: 15px; }
 .show-item { background: var(--white); border-radius: 20px; padding: 25px 35px; }
 .label-red { color: var(--accent-red); font-weight: 800; font-size: 13px; margin-bottom: 5px; }
@@ -82,8 +83,8 @@ input, select { width: 100%; padding: 14px 18px; border-radius: 12px; border: no
 
 /* TABLE */
 .log-actions { display: flex; gap: 10px; align-items: center; }
-.log-search { width: 280px; border-radius: 50px; padding: 10px 20px; font-size: 12px; }
+.log-search { width: 280px; border-radius: 50px; padding: 10px 20px; font-size: 12px; background: var(--white); }
 .table-scroll { margin-top: 30px; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-th { text-align: left; font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 15px; border-bottom: 1.5px solid rgba(113, 12, 33, 0.1); }
-td { padding: 15px; font-size: 13px; border-bottom: 1px solid rgba(113, 12, 33, 0.05); }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+th { text-align: left; font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 15px; border-bottom: 1.5px solid rgba(113, 12, 33, 0.1); color: var(--text-muted); }
+td { padding: 18px 15px; font-size: 13px; border-bottom: 1px solid rgba(113, 12, 33, 0.05); }
