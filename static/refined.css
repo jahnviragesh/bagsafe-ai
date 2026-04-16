@@ -1,24 +1,28 @@
 ﻿:root {
-  --burgundy: #850e35;
-  --rose: #ee6983;
-  --peach: #ffc4c4;
-  --cream: #fff5e4;
- 
-  --text: #3a1f25;
-  --muted: #6b3a45;
-  --line: rgba(133, 14, 53, 0.15);
- 
-  --shadow: 0 22px 60px rgba(133, 14, 53, 0.12);
- 
-  --radius-xl: 34px;
-  --radius-lg: 24px;
-  --radius-md: 18px;
+    --bg-color: #fcf5ee;    /* The soft cream background */
+    --accent: #710c21;      /* The deep burgundy text */
+    --card-bg: #fffbf9;     /* Slightly lighter card color */
+    --border: #f2e6d9;      /* Subtle border color */
 }
- 
-* {
-  box-sizing: border-box;
+
+/* Apply the fonts you linked in the HTML */
+h1, h2, h3, .serif-title {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--accent);
 }
- 
+
+body {
+    font-family: 'Manrope', sans-serif;
+    background-color: var(--bg-color);
+}
+
+/* This creates the side-by-side layout */
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
 html,
 body {
   margin: 0;
