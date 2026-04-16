@@ -1,71 +1,61 @@
-/* COLOR PALETTE - JAHNVI VERSION */
 :root {
     --china-rose: #A24C61;
     --kobi: #E2A9C0;
     --queen-pink: #E1C9D5;
-    --chocolate-kisses: #411528;
     --persian-plum: #710C21;
     --bg-cream: #FDF9F8;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-    background-color: var(--bg-cream);
-    color: var(--chocolate-kisses);
-    font-family: 'Manrope', sans-serif;
-    min-height: 100vh;
+    background: var(--bg-cream);
+    margin: 0;
     padding: 40px 20px;
-    /* This Mesh Gradient provides the color that the glass blurs */
+    font-family: 'Manrope', sans-serif;
+    /* Hard-coding background colors from your palette */
     background-image: 
-        radial-gradient(at 10% 10%, rgba(226, 169, 192, 0.4) 0px, transparent 40%),
-        radial-gradient(at 90% 10%, rgba(162, 76, 97, 0.2) 0px, transparent 40%),
-        radial-gradient(at 50% 90%, rgba(225, 201, 213, 0.5) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, #E2A9C0 0px, transparent 50%),
+        radial-gradient(at 100% 0%, #A24C61 0px, transparent 50%),
+        radial-gradient(at 50% 100%, #E1C9D5 0px, transparent 50%);
     background-attachment: fixed;
 }
 
-.serif { font-family: 'Cormorant Garamond', serif; color: var(--persian-plum); }
+.serif { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--persian-plum); }
 
-.app-layout { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+.app-layout { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
-/* THE GLASS MORPHISM SAUCE */
+/* THE GLASS EFFECT */
 .card {
-    background: rgba(255, 255, 255, 0.45); /* Transparent white */
-    backdrop-filter: blur(14px); /* Frost effect */
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.6); /* White highlight border */
-    border-radius: 30px;
-    padding: 35px;
-    box-shadow: 0 10px 30px rgba(65, 21, 40, 0.05);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(113, 12, 33, 0.05);
 }
 
 .hero-section { display: flex; justify-content: space-between; align-items: center; }
-.eyebrow { text-transform: uppercase; font-size: 10px; letter-spacing: 2.5px; font-weight: 800; color: var(--china-rose); margin-bottom: 10px; }
-h1 { font-size: 58px; font-style: italic; margin-bottom: 15px; }
-.description { font-size: 14px; max-width: 500px; color: var(--china-rose); opacity: 0.9; line-height: 1.6; }
+.eyebrow { text-transform: uppercase; font-size: 10px; letter-spacing: 2px; font-weight: 800; color: var(--china-rose); margin-bottom: 5px; }
+h1 { font-size: 50px; margin: 0; }
 
-.pill-row { display: flex; gap: 8px; margin-top: 15px; }
-.pill { padding: 6px 14px; border-radius: 50px; border: 1px solid var(--kobi); font-size: 11px; color: var(--china-rose); font-weight: 700; background: rgba(255,255,255,0.2); }
+.dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 
-.dashboard-grid { display: grid; grid-template-cols: 2fr 1fr; gap: 24px; }
-
-.grid-form { display: grid; grid-template-cols: 1fr 1fr; gap: 18px; margin-top: 20px; }
-.input-group label { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--china-rose); margin-bottom: 5px; }
+.grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+.input-group label { display: block; font-size: 10px; font-weight: 800; color: var(--china-rose); margin-bottom: 4px; }
 
 input, select { 
-    width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--queen-pink); 
-    background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 14px;
+    width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--queen-pink); 
+    background: rgba(255, 255, 255, 0.8); font-size: 14px;
 }
 
 .checkbox-row { grid-column: span 2; display: flex; gap: 10px; }
-.pill-check { flex: 1; text-align: center; padding: 12px; border-radius: 14px; border: 1px solid var(--queen-pink); font-size: 12px; cursor: pointer; background: white; font-weight: 700; color: var(--china-rose); }
+.pill-check { flex: 1; text-align: center; padding: 10px; border-radius: 12px; border: 1px solid var(--queen-pink); font-size: 12px; background: white; cursor: pointer; }
 
-.primary-btn { background: var(--persian-plum); color: white; border: none; padding: 16px 35px; border-radius: 50px; font-weight: 800; cursor: pointer; margin-top: 10px; }
-.action-btn-outline { background: transparent; border: 1px solid var(--china-rose); padding: 10px 20px; border-radius: 50px; font-size: 11px; color: var(--china-rose); font-weight: 800; cursor: pointer; }
+.primary-btn { background: var(--persian-plum); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; }
+.action-btn-outline { background: transparent; border: 1px solid var(--china-rose); padding: 8px 18px; border-radius: 50px; font-size: 10px; color: var(--china-rose); font-weight: 800; cursor: pointer; }
 
-.status-badge { background: var(--queen-pink); color: var(--persian-plum); padding: 5px 15px; border-radius: 50px; font-size: 10px; font-weight: 800; margin-bottom: 15px; display: inline-block; }
-.guidance-item { font-size: 12px; padding: 12px; background: rgba(255,255,255,0.3); border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--kobi); }
+.status-badge { background: var(--queen-pink); padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 800; }
 
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th { text-align: left; font-size: 10px; color: var(--china-rose); padding: 15px; border-bottom: 2px solid var(--queen-pink); text-transform: uppercase; }
-td { padding: 15px; font-size: 13px; border-bottom: 1px solid rgba(225, 201, 213, 0.2); }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th { text-align: left; font-size: 10px; color: var(--china-rose); padding: 12px; border-bottom: 2px solid var(--queen-pink); }
+td { padding: 12px; font-size: 13px; border-bottom: 1px solid rgba(0,0,0,0.05); }
