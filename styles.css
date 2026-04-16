@@ -15,66 +15,72 @@ body {
     font-family: 'Manrope', sans-serif;
     min-height: 100vh;
     padding: 40px 20px;
-    /* Mesh background is required for glassmorphism to be visible */
     background-image: 
-        radial-gradient(at 0% 0%, rgba(226, 169, 192, 0.3) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(162, 76, 97, 0.15) 0px, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(225, 201, 213, 0.4) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(226, 169, 192, 0.25) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(162, 76, 97, 0.1) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(225, 201, 213, 0.3) 0px, transparent 50%);
 }
 
-.serif { font-family: 'Cormorant Garamond', serif; color: var(--persian-plum); }
+.serif { font-family: 'Cormorant Garamond', serif; color: var(--persian-plum); font-weight: 600; }
 
-.app-layout { 
-    max-width: 1200px; 
-    margin: 0 auto; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 24px; 
-}
+.app-layout { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
 
-/* THE GLASS EFFECT */
+/* THE GLASS CARD */
 .card {
-    background: rgba(255, 255, 255, 0.45); 
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.4); 
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-radius: 32px;
-    padding: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 20px 40px rgba(65, 21, 40, 0.03);
+    padding: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 35px rgba(65, 21, 40, 0.04);
 }
 
-.hero-section { display: flex; justify-content: space-between; align-items: flex-start; }
-.eyebrow { text-transform: uppercase; font-size: 10px; letter-spacing: 2.5px; font-weight: 800; color: var(--china-rose); margin-bottom: 12px; }
-h1 { font-size: 64px; line-height: 1; margin-bottom: 16px; font-style: italic; }
-.description { font-size: 14px; color: var(--china-rose); max-width: 450px; margin-bottom: 24px; font-weight: 500; }
+.hero-section { display: flex; justify-content: space-between; align-items: center; }
+.hero-right { text-align: right; min-width: 280px; }
 
-.pill-row { display: flex; gap: 10px; }
-.pill { padding: 6px 16px; border-radius: 50px; border: 1px solid var(--kobi); font-size: 11px; color: var(--china-rose); font-weight: 700; background: rgba(255,255,255,0.2); }
+.eyebrow { text-transform: uppercase; font-size: 10px; letter-spacing: 2px; font-weight: 800; color: var(--china-rose); margin-bottom: 8px; }
+h1 { font-size: 56px; line-height: 1; margin-bottom: 12px; font-style: italic; }
+.description { font-size: 14px; color: var(--china-rose); max-width: 480px; margin-bottom: 20px; font-weight: 500; opacity: 0.8; }
 
-.live-status-box h2 { font-size: 56px; margin-bottom: 4px; }
-.stats-grid { margin-top: 30px; display: grid; grid-template-cols: 1fr; gap: 15px; border-top: 1px solid var(--queen-pink); padding-top: 20px; }
-.stat-item { display: flex; justify-content: space-between; align-items: baseline; }
+.pill-row { display: flex; gap: 8px; }
+.pill { padding: 6px 14px; border-radius: 50px; border: 1px solid var(--kobi); font-size: 11px; color: var(--china-rose); font-weight: 700; background: rgba(255,255,255,0.2); }
 
-.dashboard-main { display: grid; grid-template-cols: 1.8fr 1fr; gap: 24px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.live-status-box h2 { font-size: 52px; margin-bottom: 4px; }
+.status-sub { font-size: 12px; color: var(--china-rose); font-style: italic; margin-bottom: 15px; }
 
-.grid-form { display: grid; grid-template-cols: 1fr 1fr; gap: 20px; margin-top: 24px; }
-.input-group label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 8px; color: var(--china-rose); }
+.stats-grid { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid var(--queen-pink); padding-top: 20px; }
+.stat-item strong { font-size: 24px; color: var(--persian-plum); font-family: 'Cormorant Garamond', serif; }
 
-input { 
-    width: 100%; padding: 14px 18px; border-radius: 16px; 
+/* DASHBOARD LAYOUT */
+.dashboard-grid { display: grid; grid-template-cols: 2fr 1fr; gap: 24px; }
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+
+.grid-form { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; }
+.input-group label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 6px; color: var(--china-rose); }
+
+input, select { 
+    width: 100%; padding: 12px 16px; border-radius: 14px; 
     border: 1px solid var(--queen-pink); background: rgba(255, 255, 255, 0.6);
-    font-family: inherit; font-size: 14px;
+    font-family: inherit; font-size: 14px; color: var(--chocolate-kisses);
 }
 
-.checkbox-row { grid-column: span 2; display: flex; gap: 10px; }
-.pill-check { flex: 1; text-align: center; padding: 12px; border-radius: 16px; border: 1px solid var(--queen-pink); font-size: 12px; cursor: pointer; background: white; font-weight: 700; }
+.checkbox-row { grid-column: span 2; display: flex; gap: 12px; margin: 10px 0; }
+.pill-check { flex: 1; text-align: center; padding: 12px; border-radius: 14px; border: 1px solid var(--queen-pink); font-size: 12px; cursor: pointer; background: white; font-weight: 700; }
 
-.primary-btn { background: var(--persian-plum); color: white; border: none; padding: 16px 36px; border-radius: 50px; font-weight: 800; cursor: pointer; }
-.action-btn-outline { background: transparent; border: 1px solid var(--china-rose); padding: 10px 20px; border-radius: 50px; font-size: 11px; color: var(--china-rose); font-weight: 800; cursor: pointer; }
+.form-actions { grid-column: span 2; display: flex; gap: 12px; margin-top: 10px; }
 
-.status-badge { padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 800; background: var(--queen-pink); display: inline-block; margin-bottom: 12px; }
+.primary-btn { background: var(--persian-plum); color: white; border: none; padding: 14px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; transition: transform 0.2s; }
+.primary-btn:hover { background: var(--china-rose); transform: scale(1.02); }
+
+.status-badge { padding: 4px 14px; border-radius: 50px; font-size: 10px; font-weight: 800; background: var(--queen-pink); display: inline-block; margin-bottom: 12px; color: var(--persian-plum); }
+
+.guidance-list { list-style: none; margin-top: 15px; }
+.guidance-list li { font-size: 12px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.3); border-radius: 12px; border-left: 3px solid var(--kobi); }
+
+/* TABLE */
 .table-container { margin-top: 20px; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
-th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; padding: 15px; border-bottom: 2px solid var(--queen-pink); }
-td { padding: 20px 15px; font-size: 14px; border-bottom: 1px solid rgba(225, 201, 213, 0.2); }
+th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; padding: 15px; border-bottom: 2px solid var(--queen-pink); color: var(--china-rose); }
+td { padding: 18px 15px; font-size: 13px; border-bottom: 1px solid rgba(225, 201, 213, 0.2); }
