@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BagSafe AI Dashboard</title>
+    <title>BagSafe AI | Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,7 +16,7 @@
         <div class="hero-left">
             <p class="eyebrow">Advanced Python Project Reimagined</p>
             <h1 class="serif">BagSafe AI</h1>
-            <p class="description">Enterprise baggage risk assessment dashboard. Enter transfer details to predict delay probability with AI precision.</p>
+            <p class="description">Enterprise baggage risk assessment dashboard. Predict delay probability with AI precision.</p>
             <div class="pill-row">
                 <span class="pill">Risk prediction</span>
                 <span class="pill">Airport operations</span>
@@ -51,46 +51,41 @@
                 <div class="input-group"><label>Flight number</label><input type="text" name="flightNumber"></div>
                 <div class="input-group"><label>Origin</label><input type="text" name="origin"></div>
                 <div class="input-group"><label>Destination</label><input type="text" name="destination"></div>
-                <div class="input-group"><label>Layover minutes</label><input type="number" name="layoverMinutes"></div>
+                <div class="input-group"><label>Layover (min)</label><input type="number" name="layoverMinutes"></div>
                 <div class="input-group"><label>Transfer points</label><input type="number" name="transferPoints"></div>
-                <div class="input-group"><label>Terminal distance (m)</label><input type="number" name="terminalDistance"></div>
-                <div class="input-group"><label>Incoming delay (min)</label><input type="number" name="incomingDelay"></div>
-                <div class="input-group"><label>Checked bags</label><input type="number" name="checkedBags"></div>
+                <div class="input-group"><label>Distance (m)</label><input type="number" name="terminalDistance"></div>
+                <div class="input-group"><label>Delay (min)</label><input type="number" name="incomingDelay"></div>
+                <div class="input-group"><label>Bags</label><input type="number" name="checkedBags"></div>
                 <div class="input-group">
-                    <label>Baggage type</label>
+                    <label>Type</label>
                     <select name="baggageType"><option>Transfer</option><option>Priority</option></select>
                 </div>
                 <div class="checkbox-row">
-                    <label class="pill-check"><input type="checkbox" name="priorityStatus"> Priority status</label>
-                    <label class="pill-check"><input type="checkbox" name="internationalTransfer" checked> International transfer</label>
+                    <label class="pill-check"><input type="checkbox" name="priorityStatus"> Priority</label>
+                    <label class="pill-check"><input type="checkbox" name="internationalTransfer" checked> International</label>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="primary-btn">Predict and save</button>
-                    <button type="button" class="action-btn-outline" id="clearBtn">Clear form</button>
+                    <button type="button" class="action-btn-outline" id="clearBtn">Clear</button>
                 </div>
             </form>
         </section>
 
         <aside class="sidebar">
             <section class="card summary-card">
-                <p class="eyebrow">Prediction Summary</p>
+                <p class="eyebrow">Summary</p>
                 <div class="status-badge" id="riskBadge">Waiting</div>
-                <h2 class="serif" id="riskTitle">No assessment yet</h2>
-                <p>Confidence score: <strong id="riskScore">0%</strong></p>
-            </section>
-            <section class="card">
-                <p class="eyebrow">Operational Guidance</p>
-                <div class="guidance-item">Escalate high-risk bags immediately.</div>
-                <div class="guidance-item">Saved records are stored locally.</div>
+                <h2 class="serif" id="riskTitle">No Data</h2>
+                <p>Score: <strong id="riskScore">0%</strong></p>
             </section>
         </aside>
     </div>
 
     <section class="card">
-        <h2 class="serif">Transfer monitoring log</h2>
+        <h2 class="serif">Monitoring log</h2>
         <div class="table-container">
             <table>
-                <thead><tr><th>Passenger</th><th>Flight</th><th>Route</th><th>Bag</th><th>Risk</th><th>Score</th><th>Saved</th></tr></thead>
+                <thead><tr><th>Name</th><th>Flight</th><th>Route</th><th>Risk</th><th>Score</th><th>Time</th></tr></thead>
                 <tbody id="recordsTableBody"></tbody>
             </table>
         </div>
