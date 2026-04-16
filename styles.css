@@ -59,9 +59,40 @@ body {
 .field label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 8px; color: var(--accent-red); opacity: 0.8; }
 input, select { width: 100%; padding: 14px 18px; border-radius: 12px; border: none; background: var(--white); font-family: inherit; font-size: 13px; outline: none; }
 
-.checkbox-container { grid-column: span 2; display: flex; gap: 12px; margin-top: 5px; text-align: left; }
-.check-pill { flex: 1; background: #EADCD1; padding: 16px; border-radius: 40px; text-align: left; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.checkbox-container {
+    grid-column: span 2;
+    display: flex;
+    gap: 12px;
+    margin-top: 5px;
+}
 
+.check-pill {
+    flex: 1;
+    background: #EADCD1; /* Match reference beige */
+    padding: 16px 25px; /* Added 25px horizontal padding for better spacing */
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    
+    /* ALIGNMENT FIX */
+    display: flex;
+    align-items: center; 
+    justify-content: flex-start; /* This moves both the box and text to the left */
+    gap: 12px; /* Space between the checkbox and the label text */
+    
+    color: var(--accent-red);
+    transition: all 0.2s ease;
+}
+
+/* Ensure the checkbox itself stays aligned */
+.check-pill input[type="checkbox"] {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent-red); /* Keeps the checkmark color consistent */
+}
 .form-btns { grid-column: span 2; display: flex; gap: 15px; margin-top: 15px; }
 .btn-primary { background: var(--accent-red); color: var(--white); border: none; padding: 18px; border-radius: 50px; font-weight: 800; flex: 1; cursor: pointer; }
 .btn-secondary { background: var(--white); border: none; padding: 12px 24px; border-radius: 50px; font-weight: 800; color: var(--accent-red); cursor: pointer; font-size: 12px; }
