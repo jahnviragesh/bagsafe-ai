@@ -1,6 +1,6 @@
 const STORAGE_KEY = "bagsafe-web-records-v1";
 
-
+// ---------------- DOM ELEMENTS ----------------
 const form = document.getElementById("assessmentForm");
 const fillSampleBtn = document.getElementById("fillSampleBtn");
 const clearBtn = document.getElementById("clearBtn");
@@ -20,8 +20,28 @@ const statsTotal = document.getElementById("statsTotal");
 const statsHigh = document.getElementById("statsHigh");
 const statsAverage = document.getElementById("statsAverage");
 
+// ---------------- SAMPLE DATA (FIXED) ----------------
+const sampleAssessment = {
+  passengerName: "Aisha Rahman",
+  bookingReference: "BRG472",
+  bagTag: "BG-1001",
+  flightNumber: "EK211",
+  origin: "DXB",
+  destination: "LHR",
+  layoverMinutes: 55,
+  transferPoints: 2,
+  terminalDistance: 1200,
+  incomingDelay: 18,
+  checkedBags: 2,
+  baggageType: "transfer",
+  priorityStatus: false,
+  internationalTransfer: true,
+};
+
+// ---------------- STATE ----------------
 let records = loadRecords();
 
+// ---------------- STORAGE ----------------
 function loadRecords() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -34,15 +54,17 @@ function saveRecords() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 }
 
+// ---------------- FORM HELPERS ----------------
 function fillForm(data) {
   Object.entries(data).forEach(([key, value]) => {
     const field = form.elements.namedItem(key);
     if (!field) return;
+
     if (field.type === "checkbox") {
       field.checked = Boolean(value);
-      return;
+    } else {
+      field.value = value;
     }
-    field.value = value;
   });
 }
 
@@ -53,6 +75,7 @@ function clearForm() {
 
 function getFormData() {
   const data = new FormData(form);
+
   return {
     passengerName: String(data.get("passengerName") || "").trim(),
     bookingReference: String(data.get("bookingReference") || "").trim().toUpperCase(),
@@ -71,6 +94,7 @@ function getFormData() {
   };
 }
 
+// ---------------- VALIDATION ----------------
 function validate(data) {
   const required = [
     "passengerName",
@@ -80,6 +104,7 @@ function validate(data) {
     "origin",
     "destination",
   ];
+
   if (required.some((key) => !data[key])) {
     throw new Error("Please fill in all text fields.");
   }
@@ -91,14 +116,13 @@ function validate(data) {
     "incomingDelay",
     "checkedBags",
   ];
+
   if (numbers.some((key) => Number.isNaN(data[key]) || data[key] < 0)) {
     throw new Error("Please enter valid positive numbers.");
   }
-  if (data.layoverMinutes < 1 || data.transferPoints < 1 || data.checkedBags < 1) {
-    throw new Error("Layover, transfer points, and checked bags must be greater than zero.");
-  }
 }
 
+// ---------------- SCORING ENGINE ----------------
 function scoreAssessment(data) {
   let score = 14;
   const reasons = [];
@@ -109,16 +133,14 @@ function scoreAssessment(data) {
   } else if (data.layoverMinutes < 75) {
     score += 20;
     reasons.push("Moderate layover needs closer coordination.");
-  } else {
-    reasons.push("Layover duration gives the transfer team more time.");
   }
 
   if (data.incomingDelay > 35) {
     score += 24;
-    reasons.push("Large incoming delay increases missed-connection risk.");
+    reasons.push("Large incoming delay increases missed connection risk.");
   } else if (data.incomingDelay > 15) {
     score += 12;
-    reasons.push("Some incoming delay is already affecting the bag timeline.");
+    reasons.push("Some delay affecting schedule.");
   }
 
   if (data.terminalDistance > 1500) {
@@ -126,201 +148,149 @@ function scoreAssessment(data) {
     reasons.push("Long terminal distance slows baggage movement.");
   } else if (data.terminalDistance > 900) {
     score += 9;
-    reasons.push("Terminal distance adds operational pressure.");
+    reasons.push("Moderate terminal distance adds pressure.");
   }
 
   if (data.transferPoints >= 3) {
     score += 12;
-    reasons.push("Multiple transfer points add complexity.");
   } else if (data.transferPoints === 2) {
     score += 7;
-    reasons.push("A connecting route adds some handling complexity.");
   }
 
   if (data.checkedBags >= 3) {
     score += 6;
-    reasons.push("More checked bags can increase processing time.");
   }
 
   if (data.internationalTransfer) {
     score += 8;
-    reasons.push("International transfer procedures may slow handling.");
   }
 
   if (data.baggageType === "fragile") {
     score += 6;
-    reasons.push("Fragile handling usually requires extra care.");
   }
 
-  if (data.baggageType === "transfer") {
-    score += 4;
-  }
-
-  if (data.baggageType === "priority" || data.priorityStatus) {
+  if (data.priorityStatus) {
     score -= 14;
-    reasons.push("Priority handling lowers the transfer failure risk.");
+    reasons.push("Priority handling reduces risk.");
   }
 
   score = Math.max(5, Math.min(97, Math.round(score)));
 
   let risk = "Low";
-  if (score >= 70) {
-    risk = "High";
-  } else if (score >= 42) {
-    risk = "Medium";
-  }
+  if (score >= 70) risk = "High";
+  else if (score >= 42) risk = "Medium";
 
   const recommendations = {
-    Low: [
-      "Proceed with standard baggage transfer workflow.",
-      "Keep this bag in routine monitoring only.",
-      "No urgent intervention is required right now.",
-    ],
-    Medium: [
-      "Flag the bag for transfer desk monitoring.",
-      "Notify the next handling point to expect a tighter connection.",
-      "Keep this bag visible until the transfer is confirmed.",
-    ],
-    High: [
-      "Escalate immediately for manual supervision.",
-      "Prioritize loading coordination with the transfer team.",
-      "Notify supervisors before the bag misses the connection window.",
-    ],
+    Low: ["Standard processing", "No action needed", "Routine monitoring"],
+    Medium: ["Flag for monitoring", "Notify transfer team", "Track bag closely"],
+    High: ["Immediate escalation", "Manual supervision required", "Priority handling"],
   };
 
-  return {
-    risk,
-    score,
-    reasons,
-    recommendations: recommendations[risk],
-  };
+  return { risk, score, reasons, recommendations: recommendations[risk] };
 }
 
+// ---------------- RECORD ----------------
 function buildRecord(data, result) {
   return {
     id: crypto.randomUUID(),
-    passengerName: data.passengerName,
-    bookingReference: data.bookingReference,
-    bagTag: data.bagTag,
-    flightNumber: data.flightNumber,
-    route: `${data.origin}-${data.destination}`,
-    baggageType: data.baggageType,
+    ...data,
     risk: result.risk,
     score: result.score,
     savedAt: new Date().toLocaleString(),
   };
 }
 
+// ---------------- UI UPDATE ----------------
 function updateSummary(result) {
   riskBadge.className = `risk-badge ${result.risk.toLowerCase()}`;
   riskBadge.textContent = `${result.risk} Risk`;
-  riskTitle.textContent = `${result.risk} transfer probability detected`;
+  riskTitle.textContent = `${result.risk} transfer probability`;
   riskScore.textContent = `Confidence score: ${result.score}%`;
   riskReason.textContent = result.reasons.join(" ");
-  recommendationList.innerHTML = result.recommendations.map((item) => `<li>${item}</li>`).join("");
+
+  recommendationList.innerHTML = result.recommendations
+    .map((r) => `<li>${r}</li>`)
+    .join("");
 
   heroRiskLabel.textContent = result.risk;
-  heroRiskHint.textContent = `${result.score}% confidence from the latest assessment`;
+  heroRiskHint.textContent = `${result.score}% confidence`;
 }
 
+// ---------------- STATS ----------------
 function renderStats() {
   const total = records.length;
-  const high = records.filter((record) => record.risk === "High").length;
-  const average = total
-    ? Math.round(records.reduce((sum, record) => sum + record.score, 0) / total)
+  const high = records.filter(r => r.risk === "High").length;
+  const avg = total
+    ? Math.round(records.reduce((s, r) => s + r.score, 0) / total)
     : 0;
 
   statsTotal.textContent = total;
   statsHigh.textContent = high;
-  statsAverage.textContent = `${average}%`;
+  statsAverage.textContent = `${avg}%`;
 }
 
+// ---------------- TABLE ----------------
 function renderTable() {
   const query = searchInput.value.trim().toLowerCase();
-  const filtered = records.filter((record) => {
-    const haystack = [
-      record.passengerName,
-      record.flightNumber,
-      record.route,
-      record.bagTag,
-      record.risk,
-      record.bookingReference,
-    ]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(query);
-  });
+
+  const filtered = records.filter(r =>
+    Object.values(r).join(" ").toLowerCase().includes(query)
+  );
 
   if (!filtered.length) {
-    recordsTableBody.innerHTML = `
-      <tr class="empty-row">
-        <td colspan="7">No saved assessments yet. Run a prediction to populate this table.</td>
-      </tr>
-    `;
+    recordsTableBody.innerHTML =
+      `<tr><td colspan="7">No records found</td></tr>`;
     renderStats();
     return;
   }
 
-  recordsTableBody.innerHTML = filtered
-    .map(
-      (record) => `
-        <tr>
-          <td>
-            <strong>${escapeHtml(record.passengerName)}</strong><br />
-            <small>${escapeHtml(record.bookingReference)}</small>
-          </td>
-          <td>${escapeHtml(record.flightNumber)}</td>
-          <td>${escapeHtml(record.route)}</td>
-          <td>${escapeHtml(record.bagTag)}<br /><small>${escapeHtml(record.baggageType)}</small></td>
-          <td><span class="pill-cell pill-${record.risk.toLowerCase()}">${record.risk}</span></td>
-          <td>${record.score}%</td>
-          <td>${escapeHtml(record.savedAt)}</td>
-        </tr>
-      `
-    )
-    .join("");
+  recordsTableBody.innerHTML = filtered.map(r => `
+    <tr>
+      <td><strong>${r.passengerName}</strong><br><small>${r.bookingReference}</small></td>
+      <td>${r.flightNumber}</td>
+      <td>${r.origin} → ${r.destination}</td>
+      <td>${r.bagTag}</td>
+      <td>${r.risk}</td>
+      <td>${r.score}%</td>
+      <td>${r.savedAt}</td>
+    </tr>
+  `).join("");
 
   renderStats();
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
+// ---------------- EVENTS ----------------
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
 
   try {
     const data = getFormData();
     validate(data);
+
     const result = scoreAssessment(data);
     const record = buildRecord(data, result);
 
-    records = [record, ...records];
+    records.unshift(record);
     saveRecords();
+
     updateSummary(result);
     renderTable();
-  } catch (error) {
-    window.alert(error.message);
+  } catch (err) {
+    alert(err.message);
   }
 });
 
-fillSampleBtn.addEventListener("click", () => {
-  fillForm(sampleAssessment);
-});
+// FIXED BUTTON (NO MORE BUG)
+if (fillSampleBtn) {
+  fillSampleBtn.addEventListener("click", () => {
+    fillForm(sampleAssessment);
+  });
+}
 
-clearBtn.addEventListener("click", () => {
-  clearForm();
-});
+clearBtn.addEventListener("click", clearForm);
 
 clearRecordsBtn.addEventListener("click", () => {
-  const confirmed = window.confirm("Clear all saved assessments from this browser?");
-  if (!confirmed) return;
+  if (!confirm("Clear all records?")) return;
   records = [];
   saveRecords();
   renderTable();
@@ -328,5 +298,6 @@ clearRecordsBtn.addEventListener("click", () => {
 
 searchInput.addEventListener("input", renderTable);
 
+// ---------------- INIT ----------------
 fillForm(sampleAssessment);
 renderTable();
