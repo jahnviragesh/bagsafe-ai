@@ -4,160 +4,96 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BagSafe AI | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
-    <style>
-        :root {
-            --china-rose: #A24C61;
-            --kobi: #E2A9C0;
-            --queen-pink: #E1C9D5;
-            --persian-plum: #710C21;
-            --bg-cream: #FDF9F8;
-        }
-
-        body {
-            background: var(--bg-cream);
-            margin: 0;
-            padding: 40px 20px;
-            font-family: 'Manrope', sans-serif;
-            /* Mesh Gradient for the glass to blur */
-            background-image: 
-                radial-gradient(at 0% 0%, #E2A9C0 0px, transparent 50%),
-                radial-gradient(at 100% 0%, #A24C61 0px, transparent 50%),
-                radial-gradient(at 50% 100%, #E1C9D5 0px, transparent 50%);
-            background-attachment: fixed;
-        }
-
-        .serif { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--persian-plum); }
-        .app-layout { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-
-        /* THE GLASS EFFECT */
-        .card {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(113, 12, 33, 0.05);
-        }
-
-        .hero-section { display: flex; justify-content: space-between; align-items: center; }
-        .eyebrow { text-transform: uppercase; font-size: 10px; letter-spacing: 2px; font-weight: 800; color: var(--china-rose); margin-bottom: 5px; }
-        h1 { font-size: 50px; margin: 0; }
-        .description { font-size: 14px; max-width: 450px; color: var(--china-rose); margin-top: 10px; font-weight: 500; }
-
-        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        .grid-form { display: grid; grid-template-cols: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .input-group label { display: block; font-size: 10px; font-weight: 800; color: var(--china-rose); margin-bottom: 4px; }
-
-        input, select { 
-            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--queen-pink); 
-            background: rgba(255, 255, 255, 0.8); font-size: 14px;
-        }
-
-        .checkbox-row { grid-column: span 2; display: flex; gap: 10px; }
-        .pill-check { flex: 1; text-align: center; padding: 10px; border-radius: 12px; border: 1px solid var(--queen-pink); font-size: 12px; background: white; cursor: pointer; font-weight: 700; color: var(--china-rose); }
-
-        .primary-btn { background: var(--persian-plum); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; }
-        .action-btn-outline { background: transparent; border: 1px solid var(--china-rose); padding: 8px 18px; border-radius: 50px; font-size: 10px; color: var(--china-rose); font-weight: 800; cursor: pointer; }
-
-        .status-badge { background: var(--queen-pink); padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 800; color: var(--persian-plum); }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { text-align: left; font-size: 10px; color: var(--china-rose); padding: 12px; border-bottom: 2px solid var(--queen-pink); text-transform: uppercase; }
-        td { padding: 12px; font-size: 13px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-    </style>
 </head>
 <body>
 
 <div class="app-layout">
     <header class="card hero-section">
         <div class="hero-left">
-            <p class="eyebrow">Advanced Python Project Reimagined</p>
+            <p class="eyebrow">Advanced Python Project Reimagined For Web</p>
             <h1 class="serif">BagSafe AI</h1>
-            <p class="description">Enterprise baggage risk assessment dashboard. Predict delay probability with AI precision.</p>
+            <p class="description">A baggage transfer risk dashboard for airport staff. Enter transfer details, predict delay risk, and keep a clean record of bags that need attention.</p>
+            <div class="pill-row">
+                <span class="pill">Risk prediction</span>
+                <span class="pill">Airport operations</span>
+                <span class="pill">Pretty web interface</span>
+            </div>
         </div>
-        <div class="hero-right" style="text-align: right;">
-            <p class="eyebrow">Live status</p>
-            <h2 class="serif" id="heroStatus">Ready</h2>
-            <div style="display: flex; gap: 20px; margin-top: 10px; border-top: 1px solid var(--queen-pink); padding-top: 10px;">
-                <div style="text-align: center;"><p class="eyebrow">Count</p><strong id="statsTotal">0</strong></div>
-                <div style="text-align: center;"><p class="eyebrow">High</p><strong id="statsHigh">0</strong></div>
+
+        <div class="hero-right">
+            <div class="live-status-box">
+                <p class="eyebrow" style="text-align: right;">Live status</p>
+                <h2 class="serif" id="heroStatus">Ready</h2>
+                <p class="status-sub">Waiting for a new assessment</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item"><p class="eyebrow">Assessments</p><strong id="statsTotal">0</strong></div>
+                <div class="stat-item"><p class="eyebrow">High risk</p><strong id="statsHigh">0</strong></div>
+                <div class="stat-item"><p class="eyebrow">Avg score</p><strong id="statsAvg">0%</strong></div>
             </div>
         </div>
     </header>
 
     <div class="dashboard-grid">
-        <section class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 class="serif">Run assessment</h2>
-                <button type="button" class="action-btn-outline" id="fillSampleBtn">Sample Data</button>
+        <section class="card form-container">
+            <div class="card-header">
+                <h2 class="serif">Run a baggage assessment</h2>
+                <button type="button" class="action-btn-outline" id="fillSampleBtn">Use sample data</button>
             </div>
+
             <form id="assessmentForm" class="grid-form">
-                <div class="input-group"><label>Name</label><input type="text" name="passengerName"></div>
-                <div class="input-group"><label>Reference</label><input type="text" name="bookingReference"></div>
-                <div class="input-group"><label>Bag Tag</label><input type="text" name="bagTag"></div>
-                <div class="input-group"><label>Flight</label><input type="text" name="flightNumber"></div>
-                <div class="input-group"><label>Origin</label><input type="text" name="origin"></div>
-                <div class="input-group"><label>Dest</label><input type="text" name="destination"></div>
-                <div class="input-group"><label>Layover</label><input type="number" name="layoverMinutes"></div>
-                <div class="input-group"><label>Delay</label><input type="number" name="incomingDelay"></div>
+                <div class="input-group"><label>Passenger name</label><input type="text" name="passengerName" placeholder="Aisha Rahman"></div>
+                <div class="input-group"><label>Booking reference</label><input type="text" name="bookingReference" placeholder="BRG472"></div>
+                <div class="input-group"><label>Bag tag</label><input type="text" name="bagTag" placeholder="BG-1001"></div>
+                <div class="input-group"><label>Flight number</label><input type="text" name="flightNumber" placeholder="EK211"></div>
+                <div class="input-group"><label>Origin</label><input type="text" name="origin" placeholder="DXB"></div>
+                <div class="input-group"><label>Destination</label><input type="text" name="destination" placeholder="LHR"></div>
+                <div class="input-group"><label>Layover minutes</label><input type="number" name="layover" value="55"></div>
+                <div class="input-group"><label>Transfer points</label><input type="number" name="points" value="2"></div>
+                <div class="input-group"><label>Terminal distance (m)</label><input type="number" name="distance" value="1200"></div>
+                <div class="input-group"><label>Incoming delay (min)</label><input type="number" name="delay" value="18"></div>
+                <div class="input-group"><label>Checked bags</label><input type="number" name="bags" value="2"></div>
+                <div class="input-group"><label>Baggage type</label><select name="type"><option>Transfer</option><option>Fragile</option><option>Priority</option></select></div>
+
                 <div class="checkbox-row">
-                    <label class="pill-check"><input type="checkbox" name="priorityStatus"> Priority</label>
-                    <label class="pill-check"><input type="checkbox" name="international" checked> Intl</label>
+                    <label class="pill-check"><input type="checkbox" name="isPriority"> Priority status</label>
+                    <label class="pill-check"><input type="checkbox" name="isIntl" checked> International transfer</label>
                 </div>
-                <button type="submit" class="primary-btn">Predict & Save</button>
+
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">Predict and save</button>
+                    <button type="button" class="action-btn-outline" id="clearBtn">Clear form</button>
+                </div>
             </form>
         </section>
 
-        <aside class="card">
-            <p class="eyebrow">Summary</p>
-            <div class="status-badge" id="riskBadge">Waiting</div>
-            <h2 class="serif" id="riskTitle" style="font-size: 24px; margin: 10px 0;">No Data</h2>
-            <p>Risk: <strong id="riskScore">0%</strong></p>
+        <aside class="sidebar">
+            <section class="card summary-card">
+                <p class="eyebrow">Prediction Summary</p>
+                <div class="status-badge" id="riskBadge">Waiting</div>
+                <h2 class="serif" id="riskTitle">No assessment yet</h2>
+                <p>Confidence score: <strong id="riskScore">0%</strong></p>
+            </section>
         </aside>
     </div>
 
     <section class="card">
-        <h2 class="serif">Monitoring Log</h2>
+        <h2 class="serif">Transfer monitoring log</h2>
         <div class="table-container">
             <table>
-                <thead><tr><th>Name</th><th>Flight</th><th>Risk</th><th>Score</th></tr></thead>
+                <thead>
+                    <tr><th>Passenger</th><th>Flight</th><th>Route</th><th>Risk</th><th>Score</th><th>Saved</th></tr>
+                </thead>
                 <tbody id="logBody"></tbody>
             </table>
         </div>
     </section>
 </div>
 
-<script>
-    let c = 0, h = 0;
-    const form = document.getElementById('assessmentForm');
-
-    document.getElementById('fillSampleBtn').onclick = () => {
-        const s = { passengerName: "Aisha Rahman", bookingReference: "BRG472", bagTag: "BG-1001", flightNumber: "EK211", origin: "DXB", destination: "LHR", layoverMinutes: 55, incomingDelay: 18 };
-        Object.keys(s).forEach(k => form.elements[k].value = s[k]);
-    };
-
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(form).entries());
-        const score = Math.floor(Math.random() * 50) + 50;
-        const isHigh = score > 70;
-        c++; if(isHigh) h++;
-
-        document.getElementById('statsTotal').innerText = c;
-        document.getElementById('statsHigh').innerText = h;
-        document.getElementById('riskBadge').innerText = isHigh ? "Alert" : "Low";
-        document.getElementById('riskTitle').innerText = isHigh ? "High Risk" : "Secure";
-        document.getElementById('riskScore').innerText = score + "%";
-        document.getElementById('heroStatus').innerText = isHigh ? "Alert" : "Clear";
-
-        const row = `<tr><td><strong>${data.passengerName}</strong></td><td>${data.flightNumber}</td><td style="color:${isHigh?'#710C21':'green'}">${isHigh?'High':'Low'}</td><td>${score}%</td></tr>`;
-        document.getElementById('logBody').insertAdjacentHTML('afterbegin', row);
-    };
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
