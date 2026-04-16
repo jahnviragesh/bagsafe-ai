@@ -12,30 +12,28 @@
         <header class="card hero-section">
             <p class="eyebrow">Advanced Python Project Reimagined For Web</p>
             <h1 class="serif">BagSafe AI</h1>
-            <p class="description">Predict baggage delay risks and manage airport operations with precision.</p>
+            <p class="description">Predict baggage transfer failure risks using real-time operational data.</p>
             <div class="pill-row">
                 <span class="pill">Risk prediction</span>
                 <span class="pill">Airport operations</span>
                 <span class="pill">Pretty web interface</span>
             </div>
-
             <div class="live-status-hero">
                 <p class="eyebrow">Live status</p>
                 <h2 class="serif" id="heroStatus">Ready</h2>
-                <p class="status-sub">Waiting for assessment</p>
+                <p class="status-sub">Waiting for assessment data</p>
             </div>
-
             <div class="stats-grid">
                 <div class="stat-item"><p class="eyebrow">Assessments</p><strong id="statsTotal">0</strong></div>
                 <div class="stat-item"><p class="eyebrow">High risk</p><strong id="statsHigh">0</strong></div>
-                <div class="stat-item"><p class="eyebrow">Avg %</p><strong id="statsAvg">0%</strong></div>
+                <div class="stat-item"><p class="eyebrow">Avg score</p><strong id="statsAvg">0%</strong></div>
             </div>
         </header>
 
         <div class="dashboard-grid">
             <section class="card">
                 <div class="card-header">
-                    <h2 class="serif">Run baggage assessment</h2>
+                    <h2 class="serif">Run assessment</h2>
                     <button type="button" class="action-btn-outline" id="fillSampleBtn">Use sample data</button>
                 </div>
                 <form id="assessmentForm" class="grid-form">
@@ -51,18 +49,15 @@
                     <div class="input-group"><label>Delay (min)</label><input type="number" name="delay" value="18"></div>
                     <div class="input-group"><label>Bags</label><input type="number" name="bags" value="2"></div>
                     <div class="input-group"><label>Type</label><select name="type"><option>Transfer</option><option>Priority</option></select></div>
-                    
                     <div class="checkbox-row">
-                        <label class="pill-check"><input type="checkbox" name="isPriority"> Priority Status</label>
-                        <label class="pill-check"><input type="checkbox" name="isIntl" checked> Intl Transfer</label>
+                        <label class="pill-check"><input type="checkbox" name="isPriority"> Priority status</label>
+                        <label class="pill-check"><input type="checkbox" name="isIntl" checked> International</label>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="primary-btn">Predict and save</button>
-                        <button type="button" class="action-btn-outline" id="clearBtn">Clear form</button>
                     </div>
                 </form>
             </section>
-
             <aside class="sidebar">
                 <section class="card summary-card">
                     <p class="eyebrow">Prediction Summary</p>
@@ -78,14 +73,12 @@
                 <h2 class="serif">Transfer monitoring log</h2>
                 <input type="text" id="searchInput" placeholder="Search passenger..." class="search-box">
             </div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr><th>Passenger</th><th>Flight</th><th>Route</th><th>Risk</th><th>Score</th><th>Time</th></tr>
-                    </thead>
-                    <tbody id="logBody"></tbody>
-                </table>
-            </div>
+            <table>
+                <thead>
+                    <tr><th>Passenger</th><th>Flight</th><th>Route</th><th>Risk</th><th>Score</th><th>Time</th></tr>
+                </thead>
+                <tbody id="logBody"></tbody>
+            </table>
         </section>
     </div>
     <script src="script.js"></script>
